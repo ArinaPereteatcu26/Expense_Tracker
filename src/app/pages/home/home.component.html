@@ -1,1 +1,22 @@
-<p>home works!</p>
+<div class="home-container px-10 flex flex-col gap-x-8">
+  <h1 class="text-7xl font-bold">Welcome back,<span class="text-customHsl-accent">{{userService.getUser().name}}</span>
+  </h1>
+  <div class="input-container flex w-full gap-x-8 mt-6">
+    <app-form-wrapper class="w-1/2">
+      <div class="input-form flex flex-col gap-y-4">
+        <h3 class="font-bold text-2xl">Create Budget</h3>
+
+        <div class="text-inputs flex flex-col gap-y-2">
+          <label class="text-[19px] font-bold">Budget Name</label>
+          <input type="text" class="input-select" placeholder="Budget Name">
+        </div>
+
+        <div class="text-inputs flex flex-col gap-y-2">
+          <label class="text-[19px] font-bold">Amount</label>
+          <input type="number" class="input-select" placeholder="e.g R120">
+        </div>
+      </div>
+    </app-form-wrapper>
+
+  </div>
+</div>
