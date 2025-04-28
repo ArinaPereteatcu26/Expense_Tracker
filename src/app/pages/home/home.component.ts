@@ -17,10 +17,17 @@ import { Router } from '@angular/router';
 import { BudgetCardComponent } from '../../components/budget-card/budget-card.component';
 import { UiService } from '../../services/ui.service';
 import { Expense } from '../../interfaces/models/expense.interface';
+import { TableDataConfig } from '../../interfaces/models/ui-config/table-data-config.interface';
+import { TableComponent } from '../../components/table/table.component';
 
 @Component({
   selector: 'app-home',
-  imports: [FormWrapperComponent, ReactiveFormsModule, BudgetCardComponent],
+  imports: [
+    FormWrapperComponent,
+    ReactiveFormsModule,
+    BudgetCardComponent,
+    TableComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -38,6 +45,7 @@ export class HomeComponent implements OnInit {
   budgetCategories: BudgetCategory[] = [];
   budgets: Budget[] = [];
   budgetCards: BudgetCardConfig[] = [];
+  expenseTableData: TableDataConfig[] = [];
 
   constructor(
     public userService: UserService,
@@ -70,6 +78,17 @@ export class HomeComponent implements OnInit {
         console.error(error);
       },
     });
+
+    const expenses = this.expenseService.getExpenses();
+    this.expenseTableData = this.expenseService.buildExpenseTable(expenses);
+    this.expenseService.getExpenseData().subscribe({
+      next: (res: Expense[]) => {
+        this.expenseTableData = this.expenseService.buildExpenseTable(res);
+      },
+      error: (error: any) => {
+        console.error(error);
+      },
+    });
   }
 
   addBudget() {
@@ -95,9 +114,13 @@ export class HomeComponent implements OnInit {
       amount: parseFloat(this.expenseForm.value.amount),
       date: new Date(),
     };
+
+    this.expenseService.addExpense(expense);
     this.expenseForm.reset();
   }
-
+  handleDelete(data: TableDataConfig) {
+    this.expenseService.deleteExpenseById(data.id);
+  }
   buildBudgetCards(budgets: Budget[]) {
     this.budgetCards = budgets.map((item: Budget) => {
       return {
@@ -111,4 +134,6 @@ export class HomeComponent implements OnInit {
       };
     });
   }
+
+  protected readonly event = event;
 }

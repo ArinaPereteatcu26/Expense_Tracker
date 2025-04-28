@@ -28,6 +28,18 @@ export class BudgetService {
     return budgets;
   }
 
+  updateBudgetAmount(budgetId: string, spent: number) {
+    const budgets = this.getBudgets();
+
+    const index = budgets.findIndex((x) => x.id === budgetId);
+    if (index > -1) {
+      budgets[index].spent = spent;
+      this.setBudgets(budgets);
+      return;
+    }
+    throw Error('can not update budget -  not existing');
+  }
+
   getBudgetCategories(): BudgetCategory[] {
     const categories = JSON.parse(
       localStorage.getItem(this.BUDGET_CATEGORIES) || '[]',
@@ -75,6 +87,12 @@ export class BudgetService {
       JSON.stringify(budgetCategories),
     );
     this.budgetCategorySubject.next(budgetCategories);
+  }
+
+  deleteBudgetById(budgetId: string) {
+    const budgets = this.getBudgets();
+    const filtered = budgets.filter((item) => item.id !== budgetId);
+    this.setBudgets(filtered);
   }
 
   getBudgetData(): Observable<Budget[]> {

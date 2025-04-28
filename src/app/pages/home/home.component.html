@@ -74,5 +74,13 @@
     </div>
   }
 
+  @if(expenseTableData && expenseTableData.length > 0){
+    <h2 class="mini-title">Recent Expenses</h2>
+
+      <app-table (removeRow)="handleDelete($event)" [data]="expenseTableData"></app-table>
+
+  }
+
+
 
 </div>
