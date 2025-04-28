@@ -4,4 +4,7 @@
   .mini-title{
     @apply text-5xl my-8 font-bold
   }
+  .budget-card{
+    width: calc((100%/3) - 16px);
+  }
 }

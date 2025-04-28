@@ -29,4 +29,14 @@ ngOnInit():void{
   this.textColor = this.uiService.generateTailwindClass(this.config.color, 'text')
   this.bgColor = this.uiService.generateTailwindClass(this.config.color, 'bg')
 }
+
+  calculatePercentage() {
+    return (this.config.spent/this.config.budget) * 100 + '%'
+}
+
+viewDetails(){
+  if(this.config.onClick){
+    this.config.onClick();
+  }
+}
 }

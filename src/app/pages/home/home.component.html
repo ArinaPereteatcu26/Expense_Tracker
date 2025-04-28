@@ -15,7 +15,7 @@
 
         <div class="text-inputs flex flex-col gap-y-2">
           <label class="text-[19px] font-bold">Amount</label>
-          <input formControlName="budget" type="number" class="input-select" placeholder="e.g R120">
+          <input formControlName="budget" type="number" class="input-select" placeholder="e.g MDL120" min="0">
         </div>
 
         <button [disabled]="budgetForm.invalid" (click)="addBudget()" class="btn bg-customHsl-text text-white border-none w-fit text-[19px]">
@@ -41,7 +41,7 @@
 
         <div class="text-inputs flex flex-col gap-y-2">
           <label class="text-[19px] font-bold">Amount</label>
-          <input formControlName="amount" type="number" class="input-select" placeholder="e.g R120">
+          <input formControlName="amount" type="number" class="input-select" placeholder="e.g MDL120"  min="0">
         </div>
         </div>
 
@@ -56,7 +56,7 @@
           </select>
         </div>
 
-        <button class="btn bg-customHsl-text text-white border-none w-fit text-[19px]">
+        <button (click)="addExpense()" class="btn bg-customHsl-text text-white border-none w-fit text-[19px]">
           Add Expense
         </button>
       </div>
@@ -69,7 +69,7 @@
     <h2 class="mini-title">Existing Budgets</h2>
     <div class="flex w-full flex-wrap gap-4">
       @for(item of budgetCards; track $index){
-        <app-budget-card [config]="item"> </app-budget-card>
+        <app-budget-card class="budget-card" [config]="item"> </app-budget-card>
       }
     </div>
   }
