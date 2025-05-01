@@ -2,31 +2,33 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-create-account',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgIf],
   templateUrl: './create-account.component.html',
-  styleUrl: './create-account.component.scss'
+  styleUrl: './create-account.component.scss',
 })
 export class CreateAccountComponent {
-
   accountForm: FormGroup = new FormGroup({
-    name: new FormControl('', [Validators.required])
+    name: new FormControl('', [Validators.required]),
   });
 
-  constructor(private userService: UserService, private router: Router){}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+  ) {}
 
-  createAccount(){
+  createAccount() {
     this.userService.addUser(this.accountForm.value.name);
-    this.router.navigateByUrl('').then(success => {
+    this.router.navigateByUrl('').then((success) => {
       if (success) {
         console.log('Navigation successful');
       } else {
         console.error('Navigation failed');
       }
     });
-
   }
 }

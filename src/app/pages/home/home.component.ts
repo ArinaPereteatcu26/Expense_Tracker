@@ -19,6 +19,7 @@ import { TableComponent } from '../../components/table/table.component';
 import { BudgetCardConfig } from '../../interfaces/ui-config/budget-card-config.interface';
 import { TableDataConfig } from '../../interfaces/ui-config/table-data-config.interface';
 import { BudgetService } from '../../services/budget.service';
+import { NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -27,6 +28,8 @@ import { BudgetService } from '../../services/budget.service';
     ReactiveFormsModule,
     BudgetCardComponent,
     TableComponent,
+    NgIf,
+    NgForOf,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
