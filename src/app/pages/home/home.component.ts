@@ -7,18 +7,18 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { BudgetService } from '../../services/buget.service';
 import { ExpenseService } from '../../services/expense.service';
 import { BudgetCategory } from '../../interfaces/models/budget-category-interface';
 import { Budget } from '../../interfaces/models/budget.interface';
 import { v4 as uuidv4 } from 'uuid';
-import { BudgetCardConfig } from '../../interfaces/models/ui-config/budget-card-config.interface';
 import { Router } from '@angular/router';
 import { BudgetCardComponent } from '../../components/budget-card/budget-card.component';
 import { UiService } from '../../services/ui.service';
 import { Expense } from '../../interfaces/models/expense.interface';
-import { TableDataConfig } from '../../interfaces/models/ui-config/table-data-config.interface';
 import { TableComponent } from '../../components/table/table.component';
+import { BudgetCardConfig } from '../../interfaces/ui-config/budget-card-config.interface';
+import { TableDataConfig } from '../../interfaces/ui-config/table-data-config.interface';
+import { BudgetService } from '../../services/budget.service';
 
 @Component({
   selector: 'app-home',
@@ -134,6 +134,4 @@ export class HomeComponent implements OnInit {
       };
     });
   }
-
-  protected readonly event = event;
 }

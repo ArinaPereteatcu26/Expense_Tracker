@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Expense } from '../interfaces/models/expense.interface';
 import { Observable, Subject } from 'rxjs';
-import { BudgetService } from './buget.service';
-import { TableDataConfig } from '../interfaces/models/ui-config/table-data-config.interface';
+import { TableDataConfig } from '../interfaces/ui-config/table-data-config.interface';
+import { BudgetService } from './budget.service';
 
 @Injectable({
   providedIn: 'root',

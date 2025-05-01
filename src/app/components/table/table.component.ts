@@ -1,10 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { TableDataConfig } from '../../interfaces/models/ui-config/table-data-config.interface';
+
 import { UiService } from '../../services/ui.service';
+import { TableDataConfig } from '../../interfaces/ui-config/table-data-config.interface';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-table',
-  imports: [],
+  standalone: true,
+  imports: [DatePipe],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
 })

@@ -1,78 +1,72 @@
-/* You can add global styles to this file, and also import other style files */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Custom component styles */
 @layer components {
-  .btn{
-    @apply flex gap-x-2 border-2 items-center rounded-md
-    outline-none hover:no-underline py-2 px-4
-    cursor-pointer
+  /* Buttons */
+  .btn {
+    @apply flex items-center gap-x-2 px-5 py-3 rounded-lg border-2 cursor-pointer outline-none
+    transition-all duration-200 ease-in-out hover:no-underline focus:ring-2 focus:ring-offset-2
+    font-medium text-base;
   }
 
-  .input-select{
-    @apply w-full border-customHsl-bkg border-2
-    py-2 px-4 rounded-[4px] text-[16px] border-solid
-    border-customHsl-muted outline-none
+  .btn-primary {
+    @apply btn bg-customHsl-accent text-white border-none hover:bg-customHsl-accent/90
+    focus:ring-customHsl-accent shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
   }
 
-  button{
-    &:disabled{
-      background: grey;
-      cursor: auto;
-    }
+  .btn-warning {
+    @apply btn w-fit border-solid border-customHsl-warning text-customHsl-warning
+    bg-customHsl-warningopacity hover:bg-customHsl-warning hover:text-white
+    focus:ring-customHsl-warning focus:ring-offset-2;
   }
 
-  .btn-warning{
-    @apply border-solid border-customHsl-warning w-fit
-    text-customHsl-warning bg-customHsl-warningopacity
-    hover:bg-customHsl-warning hover:text-white
+  button:disabled {
+    @apply bg-gray-400 cursor-not-allowed opacity-70 transform-none shadow-none;
   }
 
-  .text-inputs{
-    @apply w-full
+  /* Input Fields */
+  .input-select {
+    @apply w-full px-4 py-3 text-base border-2 rounded-lg border-solid
+    border-gray-300 outline-none focus:ring-2 focus:ring-customHsl-accent focus:border-customHsl-accent
+    transition-all duration-200 shadow-sm;
   }
 
-  .input-form , .text-input-container{
-    @apply w-full
+  /* Status Colors */
+  .red-text {
+    @apply text-red-600;
   }
 
-  .red-text{
-    @apply text-red-700;
+  .red-bg {
+    @apply bg-red-600;
   }
 
-  .red-bg{
-    @apply bg-red-700;
-  }
-
-  .red-border{
-    @apply border-red-700;
-
+  .red-border {
+    @apply border-red-600;
   }
 
   .amber-text {
-    @apply text-amber-700
+    @apply text-amber-600;
   }
 
-
-  .amber-bg{
-    @apply bg-amber-700;
+  .amber-bg {
+    @apply bg-amber-600;
   }
 
-  .amber-border{
-    @apply border-amber-700
+  .amber-border {
+    @apply border-amber-600;
   }
 
   .blue-text {
-    @apply text-blue-500
+    @apply text-blue-500;
   }
 
-  .blue-bg{
+  .blue-bg {
     @apply bg-blue-500;
   }
 
-  .blue-border{
-    @apply border-blue-500
+  .blue-border {
+    @apply border-blue-500;
   }
-
 }

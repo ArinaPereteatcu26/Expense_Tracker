@@ -1,22 +1,61 @@
-<div class="create-account-container flex p-6 w-full h-full justify-center items-center">
+<div class="create-account-container min-h-screen w-full flex items-center justify-center p-6 bg-gradient-to-br from-gray-50 to-gray-100">
+  <div class="container max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-xl bg-white">
+    <div class="flex flex-col lg:flex-row">
+      <!-- Left Section -->
+      <div [formGroup]="accountForm" class="left-section flex flex-col p-8 md:p-12 justify-center flex-1 gap-y-6">
+        <div class="mb-2">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+            Take Control of <span class="text-customHsl-accent">Your Money</span>
+          </h1>
+          <p class="text-lg text-gray-600 mt-6 max-w-lg">
+            CashClarity empowers you to effortlessly track expenses, set budget goals, and gain valuable insights for improved financial management.
+          </p>
+        </div>
 
-  <div class="container flex gap-8 h-fit">
-    <div [formGroup]="accountForm" class="left-section flex flex-col flex-1 gap-y-4">
-      <h1 class="text-[72px] font-bold">Take Control of <span class="text-customHsl-accent">Your Money</span></h1>
-      <p class="text-2xl">Personal budgeting is the secret to financial freedom. Start your journey today.</p>
-      <input id="account-name" name="accountName" formControlName="name" class="input-select" type="text" placeholder="Enter account name">
+        <div class="space-y-6 my-4">
+          <div class="relative">
+            <label for="account-name" class="text-sm font-medium text-gray-700 mb-1 block">Account Name</label>
+            <input
+              id="account-name"
+              name="accountName"
+              formControlName="name"
+              class="input-select"
+              type="text"
+              placeholder="Enter account name"
+            >
+            <p *ngIf="accountForm.get('name')?.invalid && accountForm.get('name')?.touched"
+               class="mt-1 text-sm text-red-600">
+              Account name is required
+            </p>
+          </div>
 
+          <button
+            [disabled]="accountForm.invalid"
+            (click)="createAccount()"
+            class="btn-primary">
+            <span>Create Account</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="currentColor" aria-hidden="true" class="w-5 h-5">
+              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+        <!--<div class="mt-4">
+          <p class="text-sm text-gray-500">Already have an account? <a href="#" class="text-customHsl-accent font-medium">Sign in</a></p>
+        </div>
+      </div>-->
 
-      <button [disabled]="accountForm.invalid" (click)="createAccount()" class="btn bg-customHsl-text text-white border-none w-fit text-[19px]">
-        Create Account
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-             fill="currentColor" aria-hidden="true" width="20">
-          <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd"></path></svg>
-      </button>
-    </div>
-    <div class="right-section flex-1">
-      <img src="assets/budgeting_set_2.jpg" alt="" srcset="">
+      <!-- Right Section -->
+      <div class="right-section flex-1 bg-customHsl-accent/5 hidden lg:block">
+        <div class="h-full flex items-center justify-center p-8">
+          <img
+            src="assets/Budget.jpg"
+            alt="Budget planning illustration"
+            class="rounded-xl shadow-lg object-cover max-h-[500px] w-auto"
+          >
+        </div>
+      </div>
     </div>
   </div>
-
 </div>
