@@ -87,7 +87,8 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/theme-toggle.js"
             ],
             "styles": [
               "src/styles.scss"

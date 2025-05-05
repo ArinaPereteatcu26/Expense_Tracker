@@ -1,8 +1,11 @@
-<div class="budget-detail-container w-full h-full flex flex-col gap-y-8 p-8 bg-gray-50 rounded-lg shadow-sm">
-  <div class="flex justify-between items-center">
-  <h2 class="text-4xl font-bold flex items-center gap-x-2">
+<section class="text-pink-900 bg-white-50 dark:bg-gray-900 body-font transition-all">
+
+<div class="budget-detail-container px-6 sm:px-8 md:px-20 flex flex-col gap-y-20">
+
+  <div class=" flex justify-between items-center">
+  <h2 class="text-4xl font-bold flex items-center ">
     <span class="{{uiService.generateTailwindClass(budgetCard.color, 'text')}}">{{budgetCard.name}}</span>
-    <span class="text-gray-700">Overview</span>
+    <span class="mt-10 text-gray-700 dark:text-gray-200">Overview</span>
   </h2>
     </div>
 
@@ -13,28 +16,29 @@
       <app-budget-card
         [isDelete]="true"
         [config]="budgetCard"
-        class="budget-card w-full transition-all hover:shadow-md"
+        class="budget-card w-full transition-all hover:shadow-md  bg-white dark:bg-gray-800 "
       ></app-budget-card>
     </div>
 
-    <app-form-wrapper class="flex-1">
-      <div [formGroup]="expenseForm" class="input-form flex flex-col gap-y-4">
-        <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+    <app-form-wrapper class="flex-1 p-20 border-gray-200 dark:border-gray-700">
+
+    <div [formGroup]="expenseForm" class="input-form flex flex-col gap-y-4">
+        <div class="h-8 w-8 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5  dark:text-red-300" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1 2H8l-1-2H5V5z" clip-rule="evenodd" />
           </svg>
         </div>
-        <h3 class="font-bold text-2xl">Add New Expense</h3>
+        <h3 class="font-bold text-2xl dark:text-white">Add New Expense</h3>
 
         <div class="text-input-container w-full flex gap-x-6">
           <div class="ext-inputs flex flex-col gap-y-2">
-            <label class="text-[19px] font-bold">Expense Name</label>
-            <input formControlName="name" type="text" class="input-select" placeholder="e.g Coffee" />
+            <label class="text-[19px] font-bold  dark:text-white">Expense Name</label>
+            <input formControlName="name" type="text" class="input-select w-full placeholder-gray-400 dark:bg-gray-700 dark:text-white dark:border-gray-600" placeholder="e.g Coffee" />
           </div>
 
           <div class="text-inputs flex flex-1 flex-col  gap-y-2">
-            <label class="text-[19px] font-bold">Amount</label>
-            <input formControlName="amount" type="number" class="input-select" placeholder="e.g, MDL 120" />
+            <label class="text-[19px] font-bold dark:text-white">Amount</label>
+            <input formControlName="amount" type="number" class="input-select w-full placeholder-gray-400 dark:bg-gray-700 dark:text-white dark:border-gray-600" placeholder="e.g, MDL 120" />
           </div>
         </div>
 
@@ -51,6 +55,11 @@
   </div>
 
   @if ( expenseTableData && expenseTableData.length > 0) {
-    <app-table [data]="expenseTableData" (removeRow)="handleAction($event)"></app-table>
+    <app-table [data]="expenseTableData"
+               class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow"
+               (removeRow)="handleAction($event)">
+    </app-table>
+
   }
 </div>
+</section>

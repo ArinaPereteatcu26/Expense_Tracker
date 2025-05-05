@@ -1,3 +1,4 @@
-
-<app-nav-bar></app-nav-bar>
-<router-outlet />
+<div class="min-h-screen min-w-full bg-slate-200 dark:bg-slate-700" [ngClass]="darkModeService.darkModeSignal()">
+  <app-nav-bar></app-nav-bar>
+  <router-outlet></router-outlet>
+</div>

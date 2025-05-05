@@ -1,23 +1,23 @@
 @if(config && config.color && borderColor && textColor){
   <div class="flex flex-col gap-4 border-2 border-solid {{borderColor}}
-    py-4 px-5 rounded-[25px] bg-white">
+    py-4 px-5 rounded-[25px] bg-white dark:bg-gray-700">
 
     <div class="progress-text flex w-full justify-between items-center">
-      <p class="text-2xl {{textColor}} font-bold">{{config.name}}</p>
-      <p class="text-2xl {{textColor}}">{{config.budget | currency: 'MDL'}} Budgeted</p>
+      <p class="text-2xl {{textColor}} font-bold  dark:text-gray-200">{{config.name}}</p>
+      <p class="text-2xl {{textColor}} dark:text-gray-200">{{config.budget | currency: 'MDL'}} Budgeted</p>
     </div>
 
     <div class="progress-bar w-full h-4 appearance-none border-none rounded-[100vmax]
         overflow-hidden relative
-        bg-gray-300
+        bg-gray-300  dark:text-gray-200
     ">
       <div [style.width]="calculatePercentage()" class="progress-bar h-full absolute top-0 left-0 z-2 {{bgColor}}">
       </div>
     </div>
 
     <div class="progress-text flex justify-between w-full">
-      <small class="{{textColor}} text-[15px]">{{config.spent | currency: 'MDL '}}</small>
-      <small class="text-customHsl-muted text-[15px]">{{(config.budget - config.spent)| currency: 'MDL'}}</small>
+      <small class="{{textColor}} dark:text-gray-200 text-[15px]">{{config.spent | currency: 'MDL '}}</small>
+      <small class="text-customHsl-muted dark:text-gray-400 text-[15px]">{{(config.budget - config.spent)| currency: 'MDL'}}</small>
     </div>
 
 

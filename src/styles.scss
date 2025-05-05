@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* Custom component styles */
 @layer components {
   /* Buttons */
@@ -69,4 +70,6 @@
   .blue-border {
     @apply border-blue-500;
   }
+
 }
+
