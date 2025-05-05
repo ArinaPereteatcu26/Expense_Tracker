@@ -5,6 +5,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        colorCustom: '#CE7878',
+        violetCustom: '#5A63B8',
+        lavenderCustom: ' #AA7DCE',
+        pinkCustom: '#F5D7E3',
+        cherryCustom: '#F4A5AE',
+        roseCustom: '#A8577E',
         customHsl: {
           warning: 'hsl(4 66% 63%)',
           bkg: 'hsl(190 60% 98)',

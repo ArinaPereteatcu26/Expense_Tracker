@@ -1,8 +1,8 @@
-<section class="text-indigo-900 bg-white-50 dark:bg-gray-900 body-font transition-all">
+<section class="text-black bg-white dark:bg-gray-900 body-font transition-all">
 
 
-<div class="home-container px-4 sm:px-6 md:px-10 flex flex-col gap-y-10">
-  <h1 class="mt-10 text-3xl sm:text-5xl md:text-7xl font-bold break-words text-gray-900 dark:text-gray-200">Welcome back, <span class="text-customHsl-accent">{{userService.getUser().name}}</span>
+<div class="home-container px-6 sm:px-6 md:px-10 flex flex-col gap-y-10">
+  <h1 class="mt-10 text-3xl sm:text-5xl md:text-7xl font-bold break-words text-gray-900 dark:text-gray-200">Welcome back, <span class="text-roseCustom">{{userService.getUser().name}}</span>
   </h1>
 
   <div class="input-container flex flex-col lg:flex-row w-full gap-4 lg:gap-8 mt-4 md:mt-6">
@@ -15,7 +15,7 @@
               <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
             </svg>
           </div>
-          <h3 class="font-bold text-lg sm:text-xl text-gray-800 dark:text-gray-200">Create Budget</h3>
+          <h3 class="font-bold text-lg sm:text-xl textCustom dark:text-gray-200">Create Budget</h3>
         </div>
 
         <div class="text-inputs flex flex-col gap-y-2">
@@ -54,7 +54,7 @@
         <button
           [disabled]="budgetForm.invalid"
           (click)="addBudget()"
-          class="btn-primary mt-2 w-full sm:w-auto text-gray dark:text">
+          class="mt-2 w-full sm:w-auto px-4 py-2 rounded-lg bg-pink-300 hover:bg-pink-400 text-white dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white transition-all flex items-center justify-center gap-2 font-semibold">
           <span>Create Budget</span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                fill="currentColor" aria-hidden="true" class="w-5 h-5">
@@ -73,7 +73,7 @@
               <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1 2H8l-1-2H5V5z" clip-rule="evenodd" />
             </svg>
           </div>
-          <h3 class="font-bold text-lg sm:text-xl text-gray-800 dark:text-gray-200">Add New Expense</h3>
+          <h3 class="font-bold text-lg sm:text-xl textCustom dark:text-gray-200">Add New Expense</h3>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -139,7 +139,7 @@
         <button
           [disabled]="expenseForm.invalid"
           (click)="addExpense()"
-          class="btn-secondary mt-2 w-full sm:w-auto">
+          class="mt-2 w-full sm:w-auto px-4 py-2 rounded-lg bg-pink-300 hover:bg-pink-400 text-white dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white transition-all flex items-center justify-center gap-2 font-semibold">
           <span>Add Expense</span>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
@@ -166,4 +166,5 @@
 
   }
 </div>
+  <app-footer></app-footer>
 </section>

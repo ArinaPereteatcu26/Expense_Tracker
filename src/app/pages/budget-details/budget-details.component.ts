@@ -16,6 +16,7 @@ import { TableComponent } from '../../components/table/table.component';
 import { UiService } from '../../services/ui.service';
 import { BudgetCardConfig } from '../../interfaces/ui-config/budget-card-config.interface';
 import { TableDataConfig } from '../../interfaces/ui-config/table-data-config.interface';
+import { FooterComponent } from '../../components/footer/footer.component';
 @Component({
   selector: 'app-budget-details',
   standalone: true,
@@ -24,6 +25,7 @@ import { TableDataConfig } from '../../interfaces/ui-config/table-data-config.in
     BudgetCardComponent,
     FormWrapperComponent,
     TableComponent,
+    FooterComponent,
   ],
   templateUrl: './budget-details.component.html',
   styleUrl: './budget-details.component.scss',

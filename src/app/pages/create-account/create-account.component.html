@@ -1,14 +1,14 @@
-<section class="text-pink-900 bg-white-50 dark:bg-gray-900 body-font transition-all">
+<section class="bg-white p-20 dark:bg-gray-900 body-font transition-all">
 <div class="create-account-container px-4 sm:px-6 md:px-10 flex flex-col gap-y-10">
-  <div class="mt-10 container max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-xl bg-white dark:bg-gray-700">
+  <div class="mt-10 container max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-xl bg-pinkCustom dark:bg-gray-700">
     <div class="flex flex-col lg:flex-row">
       <!-- Left Section -->
       <div [formGroup]="accountForm" class="left-section flex flex-col p-8 md:p-12 justify-center flex-1 gap-y-6">
         <div class="mb-2">
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 dark:text-gray-100">
-            Take Control of <span class="text-customHsl-accent">Your Money</span>
+            Take Control of <span class="text-roseCustom">Your Money</span>
           </h1>
-          <p class="text-lg text-gray-600 dark:text-gray-300  mt-6 max-w-lg">
+          <p class="text-lg text-gray dark:text-gray-300  mt-6 max-w-lg">
             CashClarity empowers you to effortlessly track expenses, set budget goals, and gain valuable insights for improved financial management.
           </p>
         </div>
@@ -20,7 +20,7 @@
               id="account-name"
               name="accountName"
               formControlName="name"
-              class="input-select dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
+              class="input-select dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 placeholder-gray-400"
               type="text"
               placeholder="Enter account name"
             >
@@ -33,7 +33,7 @@
           <button
             [disabled]="accountForm.invalid"
             (click)="createAccount()"
-            class="btn-primary">
+            class="btn-primary bg-roseCustom hover:bg-roseCustom">
             <span>Create Account</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                  fill="currentColor" aria-hidden="true" class="w-5 h-5">
@@ -48,7 +48,7 @@
       </div>-->
 
       <!-- Right Section -->
-      <div class="right-section flex-1 bg-customHsl-accent/5 dark:bg-customHsl-accent/10 hidden lg:block">
+      <div class="right-section flex-1 bg-roseCustom/5 dark:bg-roseCustom/10 hidden lg:block">
         <div class="h-full flex items-center justify-center p-8">
           <img
             src="assets/Budget.jpg"
@@ -60,4 +60,7 @@
     </div>
   </div>
 </div>
+  <app-footer></app-footer>
+
+  
 </section>

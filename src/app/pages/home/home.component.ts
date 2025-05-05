@@ -20,6 +20,7 @@ import { BudgetCardConfig } from '../../interfaces/ui-config/budget-card-config.
 import { TableDataConfig } from '../../interfaces/ui-config/table-data-config.interface';
 import { BudgetService } from '../../services/budget.service';
 import { NgForOf, NgIf } from '@angular/common';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +31,7 @@ import { NgForOf, NgIf } from '@angular/common';
     TableComponent,
     NgIf,
     NgForOf,
+    FooterComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
