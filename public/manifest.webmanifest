@@ -1,6 +1,6 @@
 {
-  "name": "expense-tracker",
-  "short_name": "expense-tracker",
+  "name": "home-budget-practice-run",
+  "short_name": "home-budget-practice-run",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
