@@ -18,7 +18,7 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "docs",
-            "baseHref": "/Expense_tracker/",
+            "baseHref": "/Expense_Tracker/",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [

@@ -1,7 +1,7 @@
 {
   "configVersion": 1,
-  "timestamp": 1746564825140,
-  "index": "/Expense_tracker/index.html",
+  "timestamp": 1746565055884,
+  "index": "/Expense_Tracker/index.html",
   "assetGroups": [
     {
       "name": "app",
@@ -11,10 +11,10 @@
         "ignoreVary": true
       },
       "urls": [
-        "/Expense_tracker/index.html",
-        "/Expense_tracker/main-WDLO35EG.js",
-        "/Expense_tracker/polyfills-FFHMD2TL.js",
-        "/Expense_tracker/styles-GSJYYLYQ.css"
+        "/Expense_Tracker/index.html",
+        "/Expense_Tracker/main-WDLO35EG.js",
+        "/Expense_Tracker/polyfills-FFHMD2TL.js",
+        "/Expense_Tracker/styles-GSJYYLYQ.css"
       ],
       "patterns": []
     },
@@ -26,18 +26,18 @@
         "ignoreVary": true
       },
       "urls": [
-        "/Expense_tracker/assets/Budget.jpg"
+        "/Expense_Tracker/assets/Budget.jpg"
       ],
       "patterns": []
     }
   ],
   "dataGroups": [],
   "hashTable": {
-    "/Expense_tracker/assets/Budget.jpg": "4364c7e31ae317d24d0faea2a2c313d86c266056",
-    "/Expense_tracker/index.html": "067aa6a09ff8b3f3111161e435ac5a0a69edc91d",
-    "/Expense_tracker/main-WDLO35EG.js": "32d08f88f1345c9f4bf54aa827620e3adafdc7c8",
-    "/Expense_tracker/polyfills-FFHMD2TL.js": "f49b49a155bc7d192db62a4c15d0a612b460a667",
-    "/Expense_tracker/styles-GSJYYLYQ.css": "fc1b007917670cabde92cac92035653a834e2010"
+    "/Expense_Tracker/assets/Budget.jpg": "4364c7e31ae317d24d0faea2a2c313d86c266056",
+    "/Expense_Tracker/index.html": "71fb40372c07c8d2183cb2b293aa97deedc8b9df",
+    "/Expense_Tracker/main-WDLO35EG.js": "32d08f88f1345c9f4bf54aa827620e3adafdc7c8",
+    "/Expense_Tracker/polyfills-FFHMD2TL.js": "f49b49a155bc7d192db62a4c15d0a612b460a667",
+    "/Expense_Tracker/styles-GSJYYLYQ.css": "fc1b007917670cabde92cac92035653a834e2010"
   },
   "navigationUrls": [
     {
