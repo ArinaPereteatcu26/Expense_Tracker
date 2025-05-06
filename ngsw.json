@@ -1,0 +1,61 @@
+{
+  "configVersion": 1,
+  "timestamp": 1746558750344,
+  "index": "/Expense_Tracker/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/Expense_Tracker/index.html",
+        "/Expense_Tracker/main-WDLO35EG.js",
+        "/Expense_Tracker/polyfills-FFHMD2TL.js",
+        "/Expense_Tracker/styles-GSJYYLYQ.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/Expense_Tracker/assets/Budget.jpg"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/Expense_Tracker/assets/Budget.jpg": "4364c7e31ae317d24d0faea2a2c313d86c266056",
+    "/Expense_Tracker/index.html": "71fb40372c07c8d2183cb2b293aa97deedc8b9df",
+    "/Expense_Tracker/main-WDLO35EG.js": "32d08f88f1345c9f4bf54aa827620e3adafdc7c8",
+    "/Expense_Tracker/polyfills-FFHMD2TL.js": "f49b49a155bc7d192db62a4c15d0a612b460a667",
+    "/Expense_Tracker/styles-GSJYYLYQ.css": "fc1b007917670cabde92cac92035653a834e2010"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
