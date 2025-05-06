@@ -1,66 +1,78 @@
 <section class="bg-white dark:bg-gray-900 body-font transition-all">
 
-<div class="budget-detail-container px-6 sm:px-8 md:px-20 flex flex-col gap-y-20">
+  <div class="budget-detail-container px-4 sm:px-6 lg:px-20 flex flex-col gap-y-16 sm:gap-y-20">
 
-  <div class=" flex justify-between items-center">
-  <h2 class="text-4xl font-bold flex items-center ">
-    <span class="{{uiService.generateTailwindClass(budgetCard.color, 'text')}}">{{budgetCard.name}}</span>
-    <span class="mt-10 text-gray-700 dark:text-gray-200">Overview</span>
-  </h2>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-y-4">
+      <h2 class="text-3xl sm:text-4xl font-bold flex flex-wrap items-baseline gap-x-2">
+        <span class="{{uiService.generateTailwindClass(budgetCard.color, 'text')}}">
+          {{budgetCard.name}}
+        </span>
+        <span class="text-gray-700 dark:text-gray-200">Overview</span>
+      </h2>
     </div>
 
+    <!-- Budget Card and Form -->
+    <div class="flex flex-col md:flex-row w-full gap-y-10 md:gap-x-8">
 
-  <!--Budget-card-->
-  <div class="flex flex-col md:flex-row w-full gap-y-8 md:gap-x-8">
-    <div class="w-full md:w-[40%]">
-      <app-budget-card
-        [isDelete]="true"
-        [config]="budgetCard"
-        class="budget-card w-full transition-all hover:shadow-md  bg-white dark:bg-gray-800 "
-      ></app-budget-card>
-    </div>
-
-    <app-form-wrapper class="flex-1 p-20 border-gray-200 dark:border-gray-700">
-
-    <div [formGroup]="expenseForm" class="input-form flex flex-col gap-y-4">
-        <div class="h-8 w-8 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5  dark:text-red-300" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1 2H8l-1-2H5V5z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <h3 class="font-bold text-2xl dark:text-white">Add New Expense</h3>
-
-        <div class="text-input-container w-full flex gap-x-6">
-          <div class="ext-inputs flex flex-col gap-y-2">
-            <label class="text-[19px] font-bold  dark:text-white">Expense Name</label>
-            <input formControlName="name" type="text" class="input-select w-full placeholder-gray-400 dark:bg-gray-700 dark:text-white dark:border-gray-600" placeholder="e.g Coffee" />
-          </div>
-
-          <div class="text-inputs flex flex-1 flex-col  gap-y-2">
-            <label class="text-[19px] font-bold dark:text-white">Amount</label>
-            <input formControlName="amount" type="number" class="input-select w-full placeholder-gray-400 dark:bg-gray-700 dark:text-white dark:border-gray-600" placeholder="e.g, MDL 120" />
-          </div>
-        </div>
-
-
-        <button (click)="addExpense()" class="btn bg-customHsl-text
-                 text-white border-none w-fit text-[19px]">
-          Add Expense
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-               fill="currentColor" aria-hidden="true" width="20">
-            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd"></path></svg>
-        </button>
+      <!-- Budget Card -->
+      <div class="w-full md:w-[40%]">
+        <app-budget-card
+          [isDelete]="true"
+          [config]="budgetCard"
+          class="budget-card w-full transition-all hover:shadow-md bg-white dark:bg-gray-800">
+        </app-budget-card>
       </div>
-    </app-form-wrapper>
+
+      <!-- Form Wrapper -->
+      <app-form-wrapper class="flex-1 px-4 sm:px-6 py-6 md:p-10 border border-gray-200 dark:border-gray-700 rounded-lg">
+
+        <div [formGroup]="expenseForm" class="flex flex-col gap-y-6">
+
+          <div class="flex items-center gap-3">
+            <div class="h-8 w-8 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5  dark:text-red-300" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1 2H8l-1-2H5V5z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold dark:text-white">Add New Expense</h3>
+          </div>
+
+          <!-- Inputs -->
+          <div class="flex flex-col sm:flex-row gap-4 flex-wrap">
+            <div class="flex flex-col w-full sm:w-[48%] gap-y-2">
+              <label class="text-base font-semibold dark:text-white">Expense Name</label>
+              <input formControlName="name" type="text"
+                     class="input-select w-full placeholder-gray-400 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                     placeholder="e.g Coffee" />
+            </div>
+            <div class="flex flex-col w-full sm:w-[48%] gap-y-2">
+              <label class="text-base font-semibold dark:text-white">Amount</label>
+              <input formControlName="amount" type="number"
+                     class="input-select w-full placeholder-gray-400 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                     placeholder="e.g, MDL 120" />
+            </div>
+          </div>
+
+          <!-- Button -->
+          <button (click)="addExpense()" class="btn bg-customHsl-text text-white border-none w-fit text-base px-4 py-2">
+            Add Expense
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="currentColor" aria-hidden="true" width="20">
+              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </app-form-wrapper>
+    </div>
+
+    <!-- Table -->
+    @if (expenseTableData && expenseTableData.length > 0) {
+      <app-table
+        [data]="expenseTableData"
+        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow overflow-x-auto">
+      </app-table>
+    }
+
   </div>
 
-  @if ( expenseTableData && expenseTableData.length > 0) {
-    <app-table [data]="expenseTableData"
-               class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow"
-               (removeRow)="handleAction($event)">
-    </app-table>
-
-  }
-</div>
   <app-footer></app-footer>
 </section>
