@@ -1,0 +1,61 @@
+{
+  "configVersion": 1,
+  "timestamp": 1746557673719,
+  "index": "./index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "./index.html",
+        "./main-WDLO35EG.js",
+        "./polyfills-FFHMD2TL.js",
+        "./styles-GSJYYLYQ.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "./assets/Budget.jpg"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "./assets/Budget.jpg": "4364c7e31ae317d24d0faea2a2c313d86c266056",
+    "./index.html": "f63d6a2292911c6a79483c3a7e15f242e0b32c4f",
+    "./main-WDLO35EG.js": "32d08f88f1345c9f4bf54aa827620e3adafdc7c8",
+    "./polyfills-FFHMD2TL.js": "f49b49a155bc7d192db62a4c15d0a612b460a667",
+    "./styles-GSJYYLYQ.css": "fc1b007917670cabde92cac92035653a834e2010"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
