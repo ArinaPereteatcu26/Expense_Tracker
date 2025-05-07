@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Expense } from '../interfaces/models/expense.interface';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { TableDataConfig } from '../interfaces/ui-config/table-data-config.interface';
 import { BudgetService } from './budget.service';
 
@@ -9,7 +9,11 @@ import { BudgetService } from './budget.service';
 })
 export class ExpenseService {
   EXPENSES: string = 'EXPENSES';
-  expenseSubject: Subject<Expense[]> = new Subject();
+  // Using BehaviorSubject instead of Subject to get the initial value
+  expenseSubject: BehaviorSubject<Expense[]> = new BehaviorSubject<Expense[]>(
+    this.getExpenses(),
+  );
+
   constructor(private budgetService: BudgetService) {}
 
   addExpense(expense: Expense) {
@@ -25,13 +29,16 @@ export class ExpenseService {
       throw err;
     }
   }
+
   getExpenses(): Expense[] {
     return JSON.parse(localStorage.getItem(this.EXPENSES) || '[]') as Expense[];
   }
+
   setExpense(expenses: Expense[]) {
     localStorage.setItem(this.EXPENSES, JSON.stringify(expenses));
     this.expenseSubject.next(expenses);
   }
+
   updateExpense(expenses: Expense[], budgetId: string) {
     const budgetExpenses = expenses.filter(
       (item) => item.budgetCategory.id === budgetId,
@@ -63,6 +70,7 @@ export class ExpenseService {
     );
     this.setExpense(deleted);
   }
+
   deleteExpenseById(expenseId: string) {
     const expenses = this.getExpenses();
     const expense = expenses.filter(
@@ -80,14 +88,15 @@ export class ExpenseService {
     this.updateExpense(deleted, expense.budgetCategory.id);
   }
 
+  // FIX: This function had an incorrect comparison operator (using != instead of ===)
   getExpenseByBudgetId(budgetId: string) {
-    const expense = this.getExpenses();
-    return expense.filter(
-      (expense: Expense) => expense.budgetCategory.id != budgetId,
+    const expenses = this.getExpenses();
+    return expenses.filter(
+      (expense: Expense) => expense.budgetCategory.id === budgetId,
     );
   }
 
   getExpenseData(): Observable<Expense[]> {
-    return this.expenseSubject;
+    return this.expenseSubject.asObservable();
   }
 }
