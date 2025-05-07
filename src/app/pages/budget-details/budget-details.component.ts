@@ -17,6 +17,7 @@ import { UiService } from '../../services/ui.service';
 import { BudgetCardConfig } from '../../interfaces/ui-config/budget-card-config.interface';
 import { TableDataConfig } from '../../interfaces/ui-config/table-data-config.interface';
 import { FooterComponent } from '../../components/footer/footer.component';
+
 @Component({
   selector: 'app-budget-details',
   standalone: true,
@@ -47,21 +48,17 @@ export class BudgetDetailsComponent implements OnInit {
     private expenseService: ExpenseService,
     private activatedRoute: ActivatedRoute,
   ) {}
+
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.budgetId = params['id'];
       this.initializeData();
+      this.loadExpenses();
 
-      const expenses = this.expenseService.getExpenseByBudgetId(this.budgetId);
-      this.expenseTableData = this.expenseService.buildExpenseTable(expenses);
-
+      // Subscribe to expense data changes to update the table
       this.expenseService.getExpenseData().subscribe({
         next: (res: Expense[]) => {
-          const expenses = this.expenseService.getExpenseByBudgetId(
-            this.budgetId,
-          );
-          this.expenseTableData =
-            this.expenseService.buildExpenseTable(expenses);
+          this.loadExpenses();
         },
         error: (error: any) => {
           console.error(error);
@@ -70,20 +67,35 @@ export class BudgetDetailsComponent implements OnInit {
     });
   }
 
+  loadExpenses(): void {
+    const expenses = this.expenseService.getExpenseByBudgetId(this.budgetId);
+    this.expenseTableData = this.expenseService.buildExpenseTable(expenses);
+  }
+
   addExpense() {
-    const category = this.budgetService.getBudgetCategoryById(this.budgetId);
-    const expense: Expense = {
-      id: uuidv4(),
-      name: this.expenseForm.value.name,
-      budgetCategory: category,
-      amount: parseInt(this.expenseForm.value.amount),
-      date: new Date(),
-    };
+    if (this.expenseForm.valid) {
+      const category = this.budgetService.getBudgetCategoryById(this.budgetId);
+      const expense: Expense = {
+        id: uuidv4(),
+        name: this.expenseForm.value.name,
+        budgetCategory: category,
+        amount: parseInt(this.expenseForm.value.amount),
+        date: new Date(),
+      };
 
-    this.expenseService.addExpense(expense);
-    this.expenseForm.reset();
+      // Add the expense
+      this.expenseService.addExpense(expense);
 
-    this.initializeData();
+      // Directly update the table data without waiting for subscription
+      const expenses = this.expenseService.getExpenseByBudgetId(this.budgetId);
+      this.expenseTableData = this.expenseService.buildExpenseTable(expenses);
+
+      // Update budget details
+      this.initializeData();
+
+      // Reset the form
+      this.expenseForm.reset();
+    }
   }
 
   initializeData() {
@@ -108,6 +120,9 @@ export class BudgetDetailsComponent implements OnInit {
 
   handleAction($event: TableDataConfig) {
     this.expenseService.deleteExpenseById($event.id);
+
+    // Update both the budget details and the expense table immediately after deletion
     this.initializeData();
+    this.loadExpenses();
   }
 }
