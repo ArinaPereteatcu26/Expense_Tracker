@@ -1,14 +1,45 @@
-import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { CanActivate, Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 
-export const authGuard: CanActivateFn = (route, state) => {
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthGuard implements CanActivate {
+  constructor(
+    private userService: UserService,
+    private router: Router,
+  ) {}
 
-  const router = inject(Router);
-  const userService = inject(UserService);
-  if (!userService.isLoggedIn()) {
-    router.navigateByUrl('create-account');
+  canActivate(): boolean {
+    // Check if user is logged in
+    if (this.userService.isLoggedIn()) {
+      return true;
+    }
+
+    // If not logged in, redirect to create account page
+    this.router.navigate(['/create-account']);
     return false;
   }
-  return true;
-};
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class NoAuthGuard implements CanActivate {
+  constructor(
+    private userService: UserService,
+    private router: Router,
+  ) {}
+
+  canActivate(): boolean {
+    // Check if user is NOT logged in
+    if (!this.userService.isLoggedIn()) {
+      return true;
+    }
+
+    // If logged in, redirect to home page
+    this.router.navigate(['/']);
+    return false;
+  }
+}

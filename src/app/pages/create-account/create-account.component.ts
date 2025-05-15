@@ -1,40 +1,49 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
-  FormControl,
+  FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { NgIf } from '@angular/common';
+import { UserService } from '../../services/user.service';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-create-account',
-  standalone: true,
-  imports: [ReactiveFormsModule, NgIf, FooterComponent],
   templateUrl: './create-account.component.html',
-  styleUrl: './create-account.component.scss',
+  styleUrls: ['./create-account.component.scss'],
+  imports: [ReactiveFormsModule, FooterComponent, NgIf],
 })
-export class CreateAccountComponent {
-  accountForm: FormGroup = new FormGroup({
-    name: new FormControl('', [Validators.required]),
-  });
+export class CreateAccountComponent implements OnInit {
+  accountForm: FormGroup;
 
   constructor(
+    private fb: FormBuilder,
     private userService: UserService,
     private router: Router,
-  ) {}
-
-  createAccount() {
-    this.userService.addUser(this.accountForm.value.name);
-    this.router.navigateByUrl('').then((success) => {
-      if (success) {
-        console.log('Navigation successful');
-      } else {
-        console.error('Navigation failed');
-      }
+  ) {
+    // Initialize form
+    this.accountForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
     });
+
+    // Redirect to home if already logged in
+    if (this.userService.isLoggedIn()) {
+      this.router.navigate(['/']);
+    }
+  }
+
+  ngOnInit(): void {
+    // Additional initialization if needed
+  }
+
+  createAccount(): void {
+    if (this.accountForm.valid) {
+      const userName = this.accountForm.get('name')?.value;
+      this.userService.createAccount(userName);
+      // Router navigation is handled in the service
+    }
   }
 }

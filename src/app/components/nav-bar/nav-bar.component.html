@@ -39,4 +39,13 @@
       </button>
     }
   </nav>
+
+  <!-- Delete Confirmation Dialog -->
+  @if (userService.getShowDeleteConfirmation()) {
+    <app-delete-confirmation-dialog
+      (confirmed)="userService.confirmDeleteAccount()"
+      (cancelled)="userService.closeDeleteConfirmation()"
+    ></app-delete-confirmation-dialog>
+  }
 </header>
+

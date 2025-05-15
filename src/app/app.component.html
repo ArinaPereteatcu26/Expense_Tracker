@@ -1,4 +1,12 @@
 <div class="min-h-screen min-w-full bg-slate-200 dark:bg-slate-700" [ngClass]="darkModeService.darkModeSignal()">
   <app-nav-bar></app-nav-bar>
+
   <router-outlet></router-outlet>
+
+  <!-- Add the delete confirmation dialog component here -->
+  <app-delete-confirmation-dialog
+    *ngIf="showDeleteDialog"
+    (confirmed)="onConfirmDelete()"
+    (cancelled)="onCancelDelete()">
+  </app-delete-confirmation-dialog>
 </div>

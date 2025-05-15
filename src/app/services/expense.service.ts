@@ -1,20 +1,49 @@
 import { Injectable } from '@angular/core';
 import { Expense } from '../interfaces/models/expense.interface';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { TableDataConfig } from '../interfaces/ui-config/table-data-config.interface';
 import { BudgetService } from './budget.service';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExpenseService {
   EXPENSES: string = 'EXPENSES';
-  // Using BehaviorSubject instead of Subject to get the initial value
+
   expenseSubject: BehaviorSubject<Expense[]> = new BehaviorSubject<Expense[]>(
-    this.getExpenses(),
+    [],
   );
 
-  constructor(private budgetService: BudgetService) {}
+  constructor(
+    private budgetService: BudgetService,
+    private userService: UserService,
+  ) {
+    // Initialize expenses if a user is already logged in
+    if (this.userService.isLoggedIn()) {
+      this.initializeExpenses();
+    }
+
+    // Subscribe to user changes to reset expenses when user changes
+    this.userService.getUserObservable().subscribe((user) => {
+      if (user) {
+        // New user logged in, initialize their expenses
+        this.initializeExpenses();
+      } else {
+        // User logged out or was deleted, clear expenses
+        this.clearExpenses();
+      }
+    });
+  }
+
+  private initializeExpenses(): void {
+    const expenses = this.getExpenses();
+    this.expenseSubject.next(expenses);
+  }
+
+  private clearExpenses(): void {
+    this.expenseSubject.next([]);
+  }
 
   addExpense(expense: Expense) {
     try {
@@ -88,7 +117,6 @@ export class ExpenseService {
     this.updateExpense(deleted, expense.budgetCategory.id);
   }
 
-  // FIX: This function had an incorrect comparison operator (using != instead of ===)
   getExpenseByBudgetId(budgetId: string) {
     const expenses = this.getExpenses();
     return expenses.filter(
