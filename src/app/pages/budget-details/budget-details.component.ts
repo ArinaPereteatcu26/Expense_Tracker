@@ -69,11 +69,6 @@ export class BudgetDetailsComponent implements OnInit {
       this.initializeData();
       this.loadExpenses();
 
-
-      this.initializeData();
-      this.loadExpenses();
-
-
       // Subscribe to expense data changes to update the table
       this.expenseService.getExpenseData().subscribe({
         next: (res: Expense[]) => {
@@ -101,7 +96,6 @@ export class BudgetDetailsComponent implements OnInit {
             console.error('Budget no longer exists!');
             this.router.navigateByUrl('');
           }
-
         },
         error: (error: any) => {
           console.error('Error loading budgets:', error);
@@ -116,20 +110,11 @@ export class BudgetDetailsComponent implements OnInit {
   }
 
   addExpense() {
-
     if (this.expenseForm.valid && this.budget) {
       const expense: Expense = {
         id: uuidv4(),
         name: this.expenseForm.value.name,
         budgetCategory: this.budget,
-
-    if (this.expenseForm.valid) {
-      const category = this.budgetService.getBudgetCategoryById(this.budgetId);
-      const expense: Expense = {
-        id: uuidv4(),
-        name: this.expenseForm.value.name,
-        budgetCategory: category,
-
         amount: parseInt(this.expenseForm.value.amount),
         date: new Date(),
       };
@@ -138,7 +123,6 @@ export class BudgetDetailsComponent implements OnInit {
       this.expenseService.addExpense(expense);
 
       // Directly update the table data without waiting for subscription
-
       this.loadExpenses();
 
       // Update budget details
@@ -146,12 +130,6 @@ export class BudgetDetailsComponent implements OnInit {
       if (this.budget) {
         this.initializeData();
       }
-      const expenses = this.expenseService.getExpenseByBudgetId(this.budgetId);
-      this.expenseTableData = this.expenseService.buildExpenseTable(expenses);
-
-      // Update budget details
-      this.initializeData();
-
 
       // Reset the form
       this.expenseForm.reset();
@@ -188,13 +166,10 @@ export class BudgetDetailsComponent implements OnInit {
     this.expenseService.deleteExpenseById($event.id);
 
     // Update both the budget details and the expense table immediately after deletion
-
     this.budget = this.budgetService.getBudgetById(this.budgetId);
     if (this.budget) {
       this.initializeData();
     }
-
-    this.initializeData();
 
     this.loadExpenses();
   }
