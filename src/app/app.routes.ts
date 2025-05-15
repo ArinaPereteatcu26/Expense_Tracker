@@ -1,14 +1,20 @@
-import { Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { AuthGuard, NoAuthGuard } from './guards/auth.guard';
 import { CreateAccountComponent } from './pages/create-account/create-account.component';
 import { BudgetDetailsComponent } from './pages/budget-details/budget-details.component';
+import { NgModule } from '@angular/core';
 
 export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'home',
+    redirectTo: '',
+    pathMatch: 'full',
   },
   {
     path: 'create-account',
@@ -21,3 +27,9 @@ export const routes: Routes = [
     redirectTo: '',
   },
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}
