@@ -1,9 +1,11 @@
-import { Routes } from '@angular/router';
+﻿/*
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { AuthGuard, NoAuthGuard } from './guards/auth.guard';
 import { CreateAccountComponent } from './pages/create-account/create-account.component';
-import { BudgetDetailsComponent } from './pages/budget-details/budget-details.component';
 
+// Export the routes constant so it can be imported elsewhere
 export const routes: Routes = [
   {
     path: '',
@@ -11,13 +13,19 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'create-account',
+    path: 'account-creation',
     component: CreateAccountComponent,
     canActivate: [NoAuthGuard],
   },
-  { path: 'details/:id', component: BudgetDetailsComponent },
   {
     path: '**',
     redirectTo: '',
   },
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}
+*/

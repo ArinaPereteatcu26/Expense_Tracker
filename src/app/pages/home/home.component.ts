@@ -108,20 +108,28 @@ export class HomeComponent implements OnInit {
     this.budgetForm.reset();
   }
 
-  addExpense() {
-    const category = this.budgetService.getBudgetById(
-      this.expenseForm.value.budgetCategoryId,
-    );
-    const expense: Expense = {
-      id: uuidv4(),
-      name: this.expenseForm.value.name,
-      budgetCategory: category,
-      amount: parseFloat(this.expenseForm.value.amount),
-      date: new Date(),
-    };
+  trackById(index: number, item: any) {
+    return item.id;
+  }
 
-    this.expenseService.addExpense(expense);
-    this.expenseForm.reset();
+  addExpense() {
+    if (this.expenseForm.valid) {
+      const category = this.budgetService.getBudgetById(
+        this.expenseForm.value.budgetCategoryId,
+      );
+
+      const expense: Expense = {
+        id: uuidv4(),
+        name: this.expenseForm.value.name,
+        budgetCategory: category,
+        amount: parseFloat(this.expenseForm.value.amount),
+        date: new Date(),
+      };
+
+      this.expenseService.addExpense(expense);
+
+      this.expenseForm.reset();
+    }
   }
   handleDelete(data: TableDataConfig) {
     this.expenseService.deleteExpenseById(data.id);

@@ -102,4 +102,15 @@ export class BudgetService {
   getBudgetCategoryData(): Observable<BudgetCategory[]> {
     return this.budgetCategorySubject;
   }
+  deleteBudget(budgetId: string) {
+    const budgets = this.getBudgets();
+    const deleted = budgets.filter((budget) => budget.id !== budgetId);
+    this.setBudgets(deleted);
+
+    const budgetCategories = this.getBudgetCategories();
+    const deletedCategories = budgetCategories.filter(
+      (item) => item.id !== budgetId,
+    );
+    this.setBudgetCategories(deletedCategories);
+  }
 }

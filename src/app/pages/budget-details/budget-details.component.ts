@@ -16,6 +16,7 @@ import { TableComponent } from '../../components/table/table.component';
 import { UiService } from '../../services/ui.service';
 import { BudgetCardConfig } from '../../interfaces/ui-config/budget-card-config.interface';
 import { TableDataConfig } from '../../interfaces/ui-config/table-data-config.interface';
+import { Budget } from '../../interfaces/models/budget.interface';
 import { FooterComponent } from '../../components/footer/footer.component';
 
 @Component({
@@ -35,10 +36,11 @@ export class BudgetDetailsComponent implements OnInit {
   budgetCard!: BudgetCardConfig;
   expenseTableData: TableDataConfig[] = [];
   budgetId: string = '';
+  budget: Budget | null = null;
 
   expenseForm: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required]),
-    amount: new FormControl(null, [Validators.required]),
+    amount: new FormControl(null, [Validators.required, Validators.min(0)]),
   });
 
   constructor(
@@ -52,16 +54,57 @@ export class BudgetDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.budgetId = params['id'];
+
+      console.log('Budget ID:', this.budgetId); // Debug output
+
+      // Get the budget data
+      this.budget = this.budgetService.getBudgetById(this.budgetId);
+
+      if (!this.budget) {
+        console.error('Budget not found for ID:', this.budgetId);
+        this.router.navigateByUrl(''); // Redirect to home if budget not found
+        return;
+      }
+
       this.initializeData();
       this.loadExpenses();
+
+
+      this.initializeData();
+      this.loadExpenses();
+
 
       // Subscribe to expense data changes to update the table
       this.expenseService.getExpenseData().subscribe({
         next: (res: Expense[]) => {
           this.loadExpenses();
+
+          // Also update the budget data to reflect new expenses
+          this.budget = this.budgetService.getBudgetById(this.budgetId);
+          if (this.budget) {
+            this.initializeData();
+          }
         },
         error: (error: any) => {
-          console.error(error);
+          console.error('Error loading expenses:', error);
+        },
+      });
+
+      // Subscribe to budget data changes as well
+      this.budgetService.getBudgetData().subscribe({
+        next: (res: Budget[]) => {
+          // Find the current budget in the updated list
+          this.budget = res.find((b) => b.id === this.budgetId) || null;
+          if (this.budget) {
+            this.initializeData();
+          } else {
+            console.error('Budget no longer exists!');
+            this.router.navigateByUrl('');
+          }
+
+        },
+        error: (error: any) => {
+          console.error('Error loading budgets:', error);
         },
       });
     });
@@ -73,12 +116,20 @@ export class BudgetDetailsComponent implements OnInit {
   }
 
   addExpense() {
+
+    if (this.expenseForm.valid && this.budget) {
+      const expense: Expense = {
+        id: uuidv4(),
+        name: this.expenseForm.value.name,
+        budgetCategory: this.budget,
+
     if (this.expenseForm.valid) {
       const category = this.budgetService.getBudgetCategoryById(this.budgetId);
       const expense: Expense = {
         id: uuidv4(),
         name: this.expenseForm.value.name,
         budgetCategory: category,
+
         amount: parseInt(this.expenseForm.value.amount),
         date: new Date(),
       };
@@ -87,11 +138,20 @@ export class BudgetDetailsComponent implements OnInit {
       this.expenseService.addExpense(expense);
 
       // Directly update the table data without waiting for subscription
+
+      this.loadExpenses();
+
+      // Update budget details
+      this.budget = this.budgetService.getBudgetById(this.budgetId);
+      if (this.budget) {
+        this.initializeData();
+      }
       const expenses = this.expenseService.getExpenseByBudgetId(this.budgetId);
       this.expenseTableData = this.expenseService.buildExpenseTable(expenses);
 
       // Update budget details
       this.initializeData();
+
 
       // Reset the form
       this.expenseForm.reset();
@@ -99,13 +159,13 @@ export class BudgetDetailsComponent implements OnInit {
   }
 
   initializeData() {
-    const budget = this.budgetService.getBudgetById(this.budgetId);
+    if (!this.budget) return;
 
     this.budgetCard = {
-      name: budget.name,
-      budget: budget.budget,
-      spent: budget.spent,
-      color: budget.color,
+      name: this.budget.name,
+      budget: this.budget.budget,
+      spent: this.budget.spent,
+      color: this.budget.color,
       onClick: () => {
         this.deleteBudget();
       },
@@ -113,16 +173,29 @@ export class BudgetDetailsComponent implements OnInit {
   }
 
   deleteBudget() {
-    this.expenseService.deleteExpenseByBudgetId(this.budgetId);
-    this.budgetService.deleteBudgetById(this.budgetId);
-    this.router.navigateByUrl('');
+    if (
+      confirm(
+        'Are you sure you want to delete this budget and all associated expenses?',
+      )
+    ) {
+      this.expenseService.deleteExpenseByBudgetId(this.budgetId);
+      this.budgetService.deleteBudgetById(this.budgetId);
+      this.router.navigateByUrl('');
+    }
   }
 
   handleAction($event: TableDataConfig) {
     this.expenseService.deleteExpenseById($event.id);
 
     // Update both the budget details and the expense table immediately after deletion
+
+    this.budget = this.budgetService.getBudgetById(this.budgetId);
+    if (this.budget) {
+      this.initializeData();
+    }
+
     this.initializeData();
+
     this.loadExpenses();
   }
 }

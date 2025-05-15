@@ -1,20 +1,61 @@
 import { Injectable } from '@angular/core';
 import { Expense } from '../interfaces/models/expense.interface';
+
+import { Observable, BehaviorSubject } from 'rxjs';
+
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
+
 import { TableDataConfig } from '../interfaces/ui-config/table-data-config.interface';
 import { BudgetService } from './budget.service';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExpenseService {
   EXPENSES: string = 'EXPENSES';
+
+  expenseSubject: BehaviorSubject<Expense[]> = new BehaviorSubject<Expense[]>(
+    [],
+  );
+
+  constructor(
+    private budgetService: BudgetService,
+    private userService: UserService,
+  ) {
+    // Initialize expenses if a user is already logged in
+    if (this.userService.isLoggedIn()) {
+      this.initializeExpenses();
+    }
+
+    // Subscribe to user changes to reset expenses when user changes
+    this.userService.getUserObservable().subscribe((user) => {
+      if (user) {
+        // New user logged in, initialize their expenses
+        this.initializeExpenses();
+      } else {
+        // User logged out or was deleted, clear expenses
+        this.clearExpenses();
+      }
+    });
+  }
+
+  private initializeExpenses(): void {
+    const expenses = this.getExpenses();
+    this.expenseSubject.next(expenses);
+  }
+
+  private clearExpenses(): void {
+    this.expenseSubject.next([]);
+  }
+
   // Using BehaviorSubject instead of Subject to get the initial value
   expenseSubject: BehaviorSubject<Expense[]> = new BehaviorSubject<Expense[]>(
     this.getExpenses(),
   );
 
   constructor(private budgetService: BudgetService) {}
+
 
   addExpense(expense: Expense) {
     try {
