@@ -44,13 +44,14 @@ export class HomeComponent implements OnInit {
   expenseForm: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required]),
     amount: new FormControl(null, [Validators.required, Validators.min(0)]),
-    budgetCategoryId: new FormControl(null, [Validators.required]),
+    budgetCategoryId: new FormControl('', [Validators.required]),
   });
 
   budgetCategories: BudgetCategory[] = [];
   budgets: Budget[] = [];
   budgetCards: BudgetCardConfig[] = [];
   expenseTableData: TableDataConfig[] = [];
+  defaultCategory: string = '';
 
   constructor(
     public userService: UserService,
@@ -128,12 +129,26 @@ export class HomeComponent implements OnInit {
 
       this.expenseService.addExpense(expense);
 
-      this.expenseForm.reset();
+      // Reset form with empty values to force dropdown reset
+      this.expenseForm.reset({
+        name: '',
+        amount: null,
+        budgetCategoryId: '',
+      });
+
+      // Force selection back to the default option
+      setTimeout(() => {
+        this.expenseForm.patchValue({
+          budgetCategoryId: '',
+        });
+      }, 0);
     }
   }
+
   handleDelete(data: TableDataConfig) {
     this.expenseService.deleteExpenseById(data.id);
   }
+
   buildBudgetCards(budgets: Budget[]) {
     this.budgetCards = budgets.map((item: Budget) => {
       return {
