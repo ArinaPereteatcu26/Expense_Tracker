@@ -151,7 +151,7 @@ export class UserService {
     this.showDeleteConfirmationSubject.next(false);
 
     // Redirect to create account page
-    this.router.navigate(['/create-account']);
+    this.router.navigate(['/login']);
   }
 
   // Clear all application data (add more keys as needed)

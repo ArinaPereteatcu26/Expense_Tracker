@@ -1,4 +1,3 @@
-// combined-auth.component.ts
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -27,7 +26,7 @@ import { UserService } from '../services/user.service';
 })
 export class AuthComponent implements OnInit {
   authForm: FormGroup;
-  isCreateMode = true; // Toggle between create account and login
+  isCreateMode = true;
   loading = false;
   error = '';
   customPermissions: string[] = [];
@@ -38,16 +37,16 @@ export class AuthComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
   ) {
-    // Initialize form with all possible fields
     this.authForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]], // For create account
-      userId: [1, [Validators.required, Validators.min(1)]], // For login
-      role: ['USER', Validators.required], // For login
+      name: ['', [Validators.required, Validators.minLength(2)]], // For account creation
+      username: ['', [Validators.required, Validators.minLength(2)]], // For login
+      role: ['USER', Validators.required],
     });
 
-    // Redirect to home if already logged in
-    if (this.userService.isLoggedIn()) {
-      this.router.navigate(['/']);
+    // Check if user is already logged in when component initializes
+    if (this.authService.isAuthenticated()) {
+      console.log('User already authenticated, redirecting to home');
+      this.router.navigate(['/home']);
     }
   }
 
@@ -64,28 +63,60 @@ export class AuthComponent implements OnInit {
 
   private updateFormValidators(): void {
     const nameControl = this.authForm.get('name');
-    const userIdControl = this.authForm.get('userId');
+    const usernameControl = this.authForm.get('username');
     const roleControl = this.authForm.get('role');
 
     if (this.isCreateMode) {
-      // Create account mode - require name, disable others
-      nameControl?.setValidators([
+      // For registration, use username instead of name
+      usernameControl?.setValidators([
         Validators.required,
         Validators.minLength(2),
       ]);
-      userIdControl?.clearValidators();
-      roleControl?.clearValidators();
-    } else {
-      // Login mode - require userId and role, disable name
+      roleControl?.setValidators([Validators.required]); // Role is needed for registration
       nameControl?.clearValidators();
-      userIdControl?.setValidators([Validators.required, Validators.min(1)]);
+    } else {
+      // For login
+      usernameControl?.setValidators([
+        Validators.required,
+        Validators.minLength(2),
+      ]);
       roleControl?.setValidators([Validators.required]);
+      nameControl?.clearValidators();
     }
 
-    // Update form validity
     nameControl?.updateValueAndValidity();
-    userIdControl?.updateValueAndValidity();
+    usernameControl?.updateValueAndValidity();
     roleControl?.updateValueAndValidity();
+  }
+
+  get isFormValid(): boolean {
+    if (this.isCreateMode) {
+      // Check username and role for registration
+      return (
+        (this.authForm.get('username')?.valid &&
+          this.authForm.get('role')?.valid) ||
+        false
+      );
+    } else {
+      return (
+        (this.authForm.get('username')?.valid &&
+          this.authForm.get('role')?.valid) ||
+        false
+      );
+    }
+  }
+
+  private createAccount(): void {
+    if (
+      this.authForm.get('username')?.valid &&
+      this.authForm.get('role')?.valid
+    ) {
+      const userName = this.authForm.get('username')?.value;
+      this.userService.createAccount(userName);
+
+      // After creating account, redirect to home
+      this.router.navigate(['/home']);
+    }
   }
 
   togglePermission(permission: string, event: any): void {
@@ -108,17 +139,9 @@ export class AuthComponent implements OnInit {
     }
   }
 
-  private createAccount(): void {
-    if (this.authForm.get('name')?.valid) {
-      const userName = this.authForm.get('name')?.value;
-      this.userService.createAccount(userName);
-      // Router navigation is handled in the service
-    }
-  }
-
   private login(): void {
     if (
-      !this.authForm.get('userId')?.valid ||
+      !this.authForm.get('username')?.valid ||
       !this.authForm.get('role')?.valid
     ) {
       return;
@@ -128,7 +151,7 @@ export class AuthComponent implements OnInit {
     this.error = '';
 
     const tokenRequest: TokenRequest = {
-      userId: this.authForm.get('userId')?.value,
+      username: this.authForm.get('username')?.value,
       role: this.authForm.get('role')?.value,
       permissions:
         this.customPermissions.length > 0 ? this.customPermissions : undefined,
@@ -137,7 +160,7 @@ export class AuthComponent implements OnInit {
     this.authService.login(tokenRequest).subscribe({
       next: (response) => {
         console.log('Login successful', response);
-        this.router.navigate(['/']);
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         this.error = error.error?.error || 'Login failed';
@@ -147,17 +170,5 @@ export class AuthComponent implements OnInit {
         this.loading = false;
       },
     });
-  }
-
-  get isFormValid(): boolean {
-    if (this.isCreateMode) {
-      return this.authForm.get('name')?.valid || false;
-    } else {
-      return (
-        (this.authForm.get('userId')?.valid &&
-          this.authForm.get('role')?.valid) ||
-        false
-      );
-    }
   }
 }

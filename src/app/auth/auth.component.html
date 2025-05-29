@@ -1,4 +1,3 @@
-
 <section class="bg-white dark:bg-gray-900 body-font transition-all">
   <div class="create-account-container px-4 py-12 sm:py-16 md:py-20 flex flex-col gap-y-10">
     <div class="container max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-xl bg-pinkCustom dark:bg-gray-700">
@@ -6,103 +5,69 @@
         <!-- Left Section -->
         <div [formGroup]="authForm" class="left-section flex flex-col p-6 sm:p-8 md:p-10 lg:p-12 justify-center flex-1 gap-y-4 sm:gap-y-6">
 
-          <!-- Header Section -->
+          <!-- Header -->
           <div class="mb-2">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 dark:text-gray-100">
-              <span *ngIf="isCreateMode">Take Control of <span class="text-roseCustom">Your Money</span></span>
-              <span *ngIf="!isCreateMode">Welcome <span class="text-roseCustom">Back</span></span>
-            </h1>
-            <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300 mt-4 sm:mt-6 max-w-lg">
-              <span *ngIf="isCreateMode">CashClarity empowers you to effortlessly track expenses, set budget goals, and gain valuable insights for improved financial management.</span>
-              <span *ngIf="!isCreateMode">Sign in to your account to continue managing your finances.</span>
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-gray-100">Register</h1>
+            <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300 mt-4 max-w-lg">
+              Create your account to start using the app.
             </p>
           </div>
 
-          <!-- Form Section -->
+          <!-- Form -->
           <app-form-wrapper>
             <div class="space-y-4 sm:space-y-6 my-2 sm:my-4">
 
-              <!-- Create Account Fields -->
-              <div *ngIf="isCreateMode" class="relative">
-                <label for="account-name" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">Account Name</label>
+              <!-- Username -->
+              <div class="relative">
+                <label for="username" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">Username</label>
                 <input
-                  id="account-name"
-                  name="accountName"
-                  formControlName="name"
-                  class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-roseCustom focus:border-roseCustom dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 placeholder-gray-400"
+                  id="username"
+                  name="username"
+                  formControlName="username"
                   type="text"
-                  placeholder="Enter account name"
+                  placeholder="Enter username"
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-roseCustom focus:border-roseCustom dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
                 >
-                <p *ngIf="authForm.get('name')?.invalid && authForm.get('name')?.touched"
+                <p *ngIf="authForm.get('username')?.invalid && authForm.get('username')?.touched"
                    class="mt-1 text-sm text-red-600 dark:text-red-400">
-                  Account name is required (minimum 2 characters)
+                  Username is required
                 </p>
               </div>
 
-              <!-- Login Fields -->
-              <div *ngIf="!isCreateMode" class="space-y-4">
-                <div class="relative">
-                  <label for="user-id" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">User ID</label>
-                  <input
-                    id="user-id"
-                    name="userId"
-                    formControlName="userId"
-                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-roseCustom focus:border-roseCustom dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 placeholder-gray-400"
-                    type="number"
-                    placeholder="Enter user ID"
-                  >
-                  <p *ngIf="authForm.get('userId')?.invalid && authForm.get('userId')?.touched"
-                     class="mt-1 text-sm text-red-600 dark:text-red-400">
-                    Valid user ID is required
-                  </p>
-                </div>
+              <!-- Role Selection -->
+              <div class="relative">
+                <label for="role" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">Role</label>
+                <select
+                  id="role"
+                  name="role"
+                  formControlName="role"
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-roseCustom focus:border-roseCustom dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
+                >
+                  <option value="USER">User</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="VISITOR">Visitor</option>
+                </select>
+              </div>
 
-                <div class="relative">
-                  <label for="role" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">Role</label>
-                  <select
-                    id="role"
-                    name="role"
-                    formControlName="role"
-                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-roseCustom focus:border-roseCustom dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
-                  >
-                    <option value="USER">User</option>
-                    <option value="ADMIN">Admin</option>
-                    <option value="VISITOR">Visitor</option>
-                  </select>
-                </div>
-
-                <!-- Custom Permissions (only for non-admin roles) -->
-                <div *ngIf="authForm.get('role')?.value !== 'ADMIN'" class="relative">
-                  <label class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Custom Permissions (optional)</label>
-                  <div class="space-y-2">
-                    <label class="flex items-center">
-                      <input
-                        type="checkbox"
-                        value="READ"
-                        (change)="togglePermission('READ', $event)"
-                        class="mr-2 rounded border-gray-300 text-roseCustom focus:ring-roseCustom"
-                      >
-                      <span class="text-sm text-gray-700 dark:text-gray-300">Read</span>
-                    </label>
-                    <label class="flex items-center">
-                      <input
-                        type="checkbox"
-                        value="WRITE"
-                        (change)="togglePermission('WRITE', $event)"
-                        class="mr-2 rounded border-gray-300 text-roseCustom focus:ring-roseCustom"
-                      >
-                      <span class="text-sm text-gray-700 dark:text-gray-300">Write</span>
-                    </label>
-                    <label class="flex items-center">
-                      <input
-                        type="checkbox"
-                        value="DELETE"
-                        (change)="togglePermission('DELETE', $event)"
-                        class="mr-2 rounded border-gray-300 text-roseCustom focus:ring-roseCustom"
-                      >
-                      <span class="text-sm text-gray-700 dark:text-gray-300">Delete</span>
-                    </label>
-                  </div>
+              <!-- Custom Permissions (non-admin only) -->
+              <div *ngIf="authForm.get('role')?.value !== 'ADMIN'" class="relative">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Custom Permissions (optional)</label>
+                <div class="space-y-2">
+                  <label class="flex items-center">
+                    <input type="checkbox" value="READ" (change)="togglePermission('READ', $event)"
+                           class="mr-2 rounded border-gray-300 text-roseCustom focus:ring-roseCustom">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Read</span>
+                  </label>
+                  <label class="flex items-center">
+                    <input type="checkbox" value="WRITE" (change)="togglePermission('WRITE', $event)"
+                           class="mr-2 rounded border-gray-300 text-roseCustom focus:ring-roseCustom">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Write</span>
+                  </label>
+                  <label class="flex items-center">
+                    <input type="checkbox" value="DELETE" (change)="togglePermission('DELETE', $event)"
+                           class="mr-2 rounded border-gray-300 text-roseCustom focus:ring-roseCustom">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Delete</span>
+                  </label>
                 </div>
               </div>
 
@@ -112,13 +77,8 @@
                 (click)="onSubmit()"
                 class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-roseCustom text-white font-medium rounded-lg hover:bg-roseCustom/90 focus:outline-none focus:ring-2 focus:ring-roseCustom focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed transition-colors duration-200"
               >
-                <span *ngIf="!loading">{{ isCreateMode ? 'Create Account' : 'Sign In' }}</span>
-                <span *ngIf="loading">{{ isCreateMode ? 'Creating...' : 'Signing in...' }}</span>
-                <svg *ngIf="!loading" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                     fill="currentColor" aria-hidden="true" class="w-5 h-5">
-                  <path *ngIf="isCreateMode" fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd"></path>
-                  <path *ngIf="!isCreateMode" fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"></path>
-                </svg>
+                <span *ngIf="!loading">Register</span>
+                <span *ngIf="loading">Submitting...</span>
               </button>
 
               <!-- Error Message -->
@@ -126,41 +86,21 @@
                 {{ error }}
               </div>
 
-              <!-- Toggle Mode -->
-              <div class="mt-4 text-center">
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                  <span *ngIf="isCreateMode">Already have an account? </span>
-                  <span *ngIf="!isCreateMode">Don't have an account? </span>
-                  <button
-                    type="button"
-                    (click)="toggleMode()"
-                    class="text-roseCustom font-medium hover:text-roseCustom/80 transition-colors"
-                  >
-                    {{ isCreateMode ? 'Sign in' : 'Create account' }}
-                  </button>
-                </p>
-              </div>
             </div>
           </app-form-wrapper>
         </div>
 
-        <!-- Right Section -->
+        <!-- Right Image Section -->
         <div class="right-section flex-1 bg-roseCustom/5 dark:bg-roseCustom/10 hidden lg:block">
           <div class="h-full flex items-center justify-center p-6 lg:p-8">
-            <img
-              src="assets/Budget.jpg"
-              alt="Budget planning illustration"
-              class="rounded-xl shadow-lg object-cover max-h-[500px] w-auto"
-            >
+            <img src="assets/Budget.jpg" alt="Budget planning illustration"
+                 class="rounded-xl shadow-lg object-cover max-h-[500px] w-auto">
           </div>
         </div>
 
         <div class="lg:hidden bg-roseCustom/5 dark:bg-roseCustom/10 p-4 flex justify-center">
-          <img
-            src="assets/Budget.jpg"
-            alt="Budget planning illustration"
-            class="rounded-xl shadow-lg object-cover h-48 sm:h-64 w-auto"
-          >
+          <img src="assets/Budget.jpg" alt="Budget planning illustration"
+               class="rounded-xl shadow-lg object-cover h-48 sm:h-64 w-auto">
         </div>
       </div>
     </div>

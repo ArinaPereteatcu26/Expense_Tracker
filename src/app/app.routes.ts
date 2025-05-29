@@ -1,22 +1,13 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
-
+import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { BudgetDetailsComponent } from './pages/budget-details/budget-details.component';
-
-import { AuthGuard, NoAuthGuard } from './guards/auth.guard';
 import { AuthComponent } from './auth/auth.component';
+import { AuthGuard, NoAuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'home',
-    redirectTo: '',
+    redirectTo: '/login',
     pathMatch: 'full',
   },
   {
@@ -25,9 +16,9 @@ export const routes: Routes = [
     canActivate: [NoAuthGuard],
   },
   {
-    path: 'create-account',
-    component: AuthComponent,
-    canActivate: [NoAuthGuard],
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: 'details/:id',
@@ -36,12 +27,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '',
+    redirectTo: '/login',
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes), HttpClientModule],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}

@@ -4,9 +4,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export interface TokenRequest {
+  username: string;
   role: string;
   permissions?: string[];
-  userId: number;
 }
 
 export interface TokenResponse {
@@ -17,7 +17,7 @@ export interface TokenResponse {
 }
 
 export interface User {
-  userId: number;
+  username: string;
   role: string;
   permissions: string[];
 }
@@ -27,15 +27,12 @@ export interface User {
 })
 export class AuthService {
   private baseUrl = 'http://localhost:5056/api';
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser: Observable<User | null>;
+  private currentUserSubject = new BehaviorSubject<User | null>(
+    this.getCurrentUserFromToken(),
+  );
+  public currentUser = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<User | null>(
-      this.getCurrentUserFromToken(),
-    );
-    this.currentUser = this.currentUserSubject.asObservable();
-  }
+  constructor(private http: HttpClient) {}
 
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
@@ -46,22 +43,15 @@ export class AuthService {
       .post<TokenResponse>(`${this.baseUrl}/Token`, tokenRequest)
       .pipe(
         map((response) => {
-          if (response && response.token) {
-            localStorage.setItem('token', response.token);
-            const user: User = {
-              userId: tokenRequest.userId,
-              role: response.role,
-              permissions: response.permissions,
-            };
-            localStorage.setItem('user', JSON.stringify(user));
-            this.currentUserSubject.next(user);
+          if (response?.token) {
+            this.saveTokenAndUser(response, tokenRequest.username);
           }
           return response;
         }),
       );
   }
 
-  logout() {
+  logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.currentUserSubject.next(null);
@@ -73,29 +63,41 @@ export class AuthService {
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      const currentTime = Math.floor(Date.now() / 1000);
-      return payload.exp > currentTime;
+      return payload.exp > Math.floor(Date.now() / 1000);
     } catch {
       return false;
     }
   }
 
   hasPermission(permission: string): boolean {
-    const user = this.currentUserValue;
-    return user?.permissions.includes(permission) || false;
+    return this.currentUserValue?.permissions.includes(permission) || false;
   }
 
   hasRole(role: string): boolean {
-    const user = this.currentUserValue;
-    return user?.role === role;
+    return this.currentUserValue?.role === role;
+  }
+
+  private saveTokenAndUser(response: TokenResponse, username: string): void {
+    localStorage.setItem('token', response.token);
+    const user: User = {
+      username,
+      role: response.role,
+      permissions: response.permissions,
+    };
+    localStorage.setItem('user', JSON.stringify(user));
+    this.currentUserSubject.next(user);
   }
 
   private getCurrentUserFromToken(): User | null {
-    const userJson = localStorage.getItem('user');
     const token = localStorage.getItem('token');
+    const userJson = localStorage.getItem('user');
 
-    if (userJson && token && this.isAuthenticated()) {
-      return JSON.parse(userJson);
+    if (token && userJson && this.isAuthenticated()) {
+      try {
+        return JSON.parse(userJson);
+      } catch {
+        return null;
+      }
     }
     return null;
   }
