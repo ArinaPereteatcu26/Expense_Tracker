@@ -21,6 +21,7 @@ import { TableDataConfig } from '../../interfaces/ui-config/table-data-config.in
 import { BudgetService } from '../../services/budget.service';
 import { NgForOf, NgIf } from '@angular/common';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { ApiService } from '../../api.service';
 
 @Component({
   selector: 'app-home',
@@ -59,13 +60,16 @@ export class HomeComponent implements OnInit {
     private expenseService: ExpenseService,
     private router: Router,
     private uiService: UiService,
+    private api: ApiService,
   ) {}
 
   ngOnInit(): void {
     this.budgetCategories = this.budgetService.getBudgetCategories();
     this.budgets = this.budgetService.getBudgets();
     this.buildBudgetCards(this.budgets);
-
+    this.api.getBudgets().subscribe((data) => {
+      console.log(data);
+    });
     this.budgetService.getBudgetData().subscribe({
       next: (res: Budget[]) => {
         this.budgets = res;

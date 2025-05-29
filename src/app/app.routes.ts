@@ -4,6 +4,7 @@ import { AuthGuard, NoAuthGuard } from './guards/auth.guard';
 import { CreateAccountComponent } from './pages/create-account/create-account.component';
 import { BudgetDetailsComponent } from './pages/budget-details/budget-details.component';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 export const routes: Routes = [
   {
@@ -29,7 +30,7 @@ export const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes), HttpClientModule],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

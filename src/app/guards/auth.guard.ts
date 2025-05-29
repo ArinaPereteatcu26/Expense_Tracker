@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
   constructor(
-    private userService: UserService,
+    private authService: AuthService,
     private router: Router,
   ) {}
 
   canActivate(): boolean {
-    // Check if user is logged in
-    if (this.userService.isLoggedIn()) {
+    // Check if user is authenticated
+    if (this.authService.isAuthenticated()) {
       return true;
     }
 
-    // If not logged in, redirect to create account page
-    this.router.navigate(['/create-account']);
+    // If not authenticated, redirect to login page
+    this.router.navigate(['/login']);
     return false;
   }
 }
@@ -28,17 +28,17 @@ export class AuthGuard implements CanActivate {
 })
 export class NoAuthGuard implements CanActivate {
   constructor(
-    private userService: UserService,
+    private authService: AuthService,
     private router: Router,
   ) {}
 
   canActivate(): boolean {
-    // Check if user is NOT logged in
-    if (!this.userService.isLoggedIn()) {
+    // Check if user is NOT authenticated
+    if (!this.authService.isAuthenticated()) {
       return true;
     }
 
-    // If logged in, redirect to home page
+    // If authenticated, redirect to home page
     this.router.navigate(['/']);
     return false;
   }
