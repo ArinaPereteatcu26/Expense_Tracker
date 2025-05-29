@@ -1,11 +1,12 @@
-import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { AuthGuard, NoAuthGuard } from './guards/auth.guard';
-import { CreateAccountComponent } from './pages/create-account/create-account.component';
-import { BudgetDetailsComponent } from './pages/budget-details/budget-details.component';
 import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { LoginComponent } from './login/login.component';
+
+import { HomeComponent } from './pages/home/home.component';
+import { BudgetDetailsComponent } from './pages/budget-details/budget-details.component';
+
+import { AuthGuard, NoAuthGuard } from './guards/auth.guard';
+import { AuthComponent } from './auth/auth.component';
 
 export const routes: Routes = [
   {
@@ -20,15 +21,19 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginComponent,
+    component: AuthComponent,
     canActivate: [NoAuthGuard],
   },
   {
     path: 'create-account',
-    component: CreateAccountComponent,
+    component: AuthComponent,
     canActivate: [NoAuthGuard],
   },
-  { path: 'details/:id', component: BudgetDetailsComponent },
+  {
+    path: 'details/:id',
+    component: BudgetDetailsComponent,
+    canActivate: [AuthGuard],
+  },
   {
     path: '**',
     redirectTo: '',

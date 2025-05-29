@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface Budget {
   id: number;
@@ -32,6 +33,18 @@ export interface CreateExpenseDto {
   budgetId: number;
 }
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -40,13 +53,23 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // The interceptor will automatically add the Authorization header
-  getSecureData(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/secure-data`);
+  // Get paginated budgets
+  getBudgets(
+    page: number = 1,
+    limit: number = 10,
+  ): Observable<PaginatedResponse<Budget>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    return this.http.get<PaginatedResponse<Budget>>(`${this.baseUrl}/budgets`, {
+      params,
+    });
   }
 
-  getBudgets(): Observable<Budget[]> {
-    return this.http.get<Budget[]>(`${this.baseUrl}/budgets`);
+  // Get all budgets (for backwards compatibility)
+  getAllBudgets(): Observable<Budget[]> {
+    return this.getBudgets(1, 1000).pipe(map((response) => response.data));
   }
 
   getBudget(id: number): Observable<Budget> {
@@ -65,11 +88,31 @@ export class ApiService {
     return this.http.delete<void>(`${this.baseUrl}/budgets/${id}`);
   }
 
-  getExpenses(budgetId?: number): Observable<Expense[]> {
-    const url = budgetId
-      ? `${this.baseUrl}/expenses?budgetId=${budgetId}`
-      : `${this.baseUrl}/expenses`;
-    return this.http.get<Expense[]>(url);
+  // Get paginated expenses
+  getExpenses(
+    page: number = 1,
+    limit: number = 10,
+    budgetId?: number,
+  ): Observable<PaginatedResponse<Expense>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    if (budgetId) {
+      params = params.set('budgetId', budgetId.toString());
+    }
+
+    return this.http.get<PaginatedResponse<Expense>>(
+      `${this.baseUrl}/expenses`,
+      { params },
+    );
+  }
+
+  // Get all expenses (for backwards compatibility)
+  getAllExpenses(budgetId?: number): Observable<Expense[]> {
+    return this.getExpenses(1, 1000, budgetId).pipe(
+      map((response) => response.data),
+    );
   }
 
   createExpense(expense: CreateExpenseDto): Observable<Expense> {

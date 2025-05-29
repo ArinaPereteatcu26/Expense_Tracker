@@ -1,10 +1,18 @@
-<div class="flex relative bg-pinkCustom dark:bg-gray-800 p-10
-    rounded-[25px] before:inset-2 before:absolute before:border-2
-    before:border-dashed before:rounded-3xl before:border-customHsl-white dark:before:border-gray-600
-    shadow-sm border-t-2 border-l-2 border-l-white dark:border-l-gray-700 border-solid
-    border-r-2 border-b-2 border-r-customHsl-bkg dark:border-r-gray-900 border-b-customHsl-bkg dark:border-b-gray-900
-">
-  <div class="relative z-10 top-0 left-0 w-full h-full">
+<div
+  class="flex relative shadow-sm border-t-2 border-l-2 border-solid border-r-2 border-b-2 transition-all duration-300 hover:shadow-md"
+  [class]="wrapperClasses"
+  [attr.aria-label]="ariaLabel"
+  [attr.role]="role"
+>
+  <!-- Dashed border overlay -->
+  <div
+    class="absolute inset-2 border-2 border-dashed transition-colors duration-300"
+    [class]="dashedBorderClasses"
+    [attr.aria-hidden]="true"
+  ></div>
+
+  <!-- Content container -->
+  <div class="relative z-10 w-full h-full" [class]="contentClasses">
     <ng-content></ng-content>
   </div>
 </div>
