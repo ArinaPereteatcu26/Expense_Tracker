@@ -26,7 +26,7 @@ export interface User {
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:5055/api';
+  private baseUrl = 'http://localhost:5056/api';
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 

@@ -21,7 +21,7 @@ import { TableDataConfig } from '../../interfaces/ui-config/table-data-config.in
 import { BudgetService } from '../../services/budget.service';
 import { NgForOf, NgIf } from '@angular/common';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { ApiService } from '../../api.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-home',

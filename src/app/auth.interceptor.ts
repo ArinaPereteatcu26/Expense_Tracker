@@ -7,38 +7,30 @@ import {
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AuthService } from './auth.service';
+
 import { Router } from '@angular/router';
+import { AuthService } from './services/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   intercept(
-    req: HttpRequest<any>,
+    request: HttpRequest<any>,
     next: HttpHandler,
   ): Observable<HttpEvent<any>> {
+    // Add auth header with jwt if user is logged in and request is to the api url
     const token = localStorage.getItem('token');
+    const isApiUrl = request.url.startsWith('http://localhost:5056/api');
 
-    if (token && this.authService.isAuthenticated()) {
-      req = req.clone({
+    if (token && this.authService.isAuthenticated() && isApiUrl) {
+      request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
         },
       });
     }
 
-    return next.handle(req).pipe(
-      catchError((error) => {
-        if (error.status === 401) {
-          this.authService.logout();
-          this.router.navigate(['/login']);
-        }
-        return throwError(() => error);
-      }),
-    );
+    return next.handle(request);
   }
 }

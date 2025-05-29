@@ -5,6 +5,7 @@ import { CreateAccountComponent } from './pages/create-account/create-account.co
 import { BudgetDetailsComponent } from './pages/budget-details/budget-details.component';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { LoginComponent } from './login/login.component';
 
 export const routes: Routes = [
   {
@@ -16,6 +17,11 @@ export const routes: Routes = [
     path: 'home',
     redirectTo: '',
     pathMatch: 'full',
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [NoAuthGuard],
   },
   {
     path: 'create-account',
