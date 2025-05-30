@@ -1,7 +1,7 @@
-// auth.service.ts - Fixed version
+// auth.service.ts - Fixed version with better error handling
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
@@ -75,61 +75,125 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+    // Also remove any other user-related data
+    localStorage.removeItem('currentUser');
     this.isAuthenticatedSubject.next(false);
   }
 
   isAuthenticated(): boolean {
-    return this.hasValidToken();
+    try {
+      return this.hasValidToken();
+    } catch (error) {
+      console.warn('Error checking authentication status:', error);
+      return false;
+    }
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    try {
+      return localStorage.getItem(this.tokenKey);
+    } catch (error) {
+      console.warn('Error getting token from localStorage:', error);
+      return null;
+    }
   }
 
   getUserFromToken(): any {
-    const token = this.getToken();
-    if (token && !this.jwtHelper.isTokenExpired(token)) {
-      return this.jwtHelper.decodeToken(token);
+    try {
+      const token = this.getToken();
+      if (token && this.jwtHelper && !this.jwtHelper.isTokenExpired(token)) {
+        return this.jwtHelper.decodeToken(token);
+      }
+      return null;
+    } catch (error) {
+      console.warn('Error decoding token:', error);
+      return null;
     }
-    return null;
   }
 
   getUserRole(): string | null {
-    const user = this.getUserFromToken();
-    return user?.role || null;
+    try {
+      const user = this.getUserFromToken();
+      return user?.role || null;
+    } catch (error) {
+      console.warn('Error getting user role:', error);
+      return null;
+    }
   }
 
   getUserPermissions(): string[] {
-    const user = this.getUserFromToken();
-    return user?.permission ? [].concat(user.permission) : [];
+    try {
+      const user = this.getUserFromToken();
+      if (!user?.permission) return [];
+
+      // Handle both single permission and array of permissions
+      return Array.isArray(user.permission)
+        ? user.permission
+        : [user.permission];
+    } catch (error) {
+      console.warn('Error getting user permissions:', error);
+      return [];
+    }
   }
 
   hasPermission(permission: string): boolean {
-    const permissions = this.getUserPermissions();
-    return permissions.includes(permission);
+    try {
+      const permissions = this.getUserPermissions();
+      return permissions.includes(permission);
+    } catch (error) {
+      console.warn('Error checking permission:', error);
+      return false;
+    }
   }
 
   hasRole(role: string): boolean {
-    const userRole = this.getUserRole();
-    return userRole === role;
+    try {
+      const userRole = this.getUserRole();
+      return userRole === role;
+    } catch (error) {
+      console.warn('Error checking role:', error);
+      return false;
+    }
   }
 
   private setToken(token: string): void {
-    localStorage.setItem(this.tokenKey, token);
-    this.isAuthenticatedSubject.next(true);
+    try {
+      localStorage.setItem(this.tokenKey, token);
+      this.isAuthenticatedSubject.next(true);
+    } catch (error) {
+      console.error('Error setting token:', error);
+    }
   }
 
   private hasValidToken(): boolean {
-    const token = this.getToken();
-    // Add null check for jwtHelper to prevent errors during initialization
-    if (!token || !this.jwtHelper) {
-      return false;
-    }
-
     try {
-      return !this.jwtHelper.isTokenExpired(token);
+      const token = this.getToken();
+
+      // If no token exists, return false
+      if (!token) {
+        return false;
+      }
+
+      // If jwtHelper is not available (during initialization), assume token is valid
+      if (!this.jwtHelper) {
+        console.warn('JwtHelper not available during token validation');
+        return true;
+      }
+
+      // Check if token is expired
+      const isExpired = this.jwtHelper.isTokenExpired(token);
+
+      // If token is expired, clean up
+      if (isExpired) {
+        this.logout();
+        return false;
+      }
+
+      return true;
     } catch (error) {
-      console.error('Error checking token validity:', error);
+      console.error('Error validating token:', error);
+      // If there's an error, assume token is invalid and clean up
+      this.logout();
       return false;
     }
   }
@@ -141,19 +205,24 @@ export class AuthService {
 
   // Token expiration check
   getTokenExpirationDate(): Date | null {
-    const token = this.getToken();
-    return token && this.jwtHelper
-      ? this.jwtHelper.getTokenExpirationDate(token)
-      : null;
+    try {
+      const token = this.getToken();
+      return token && this.jwtHelper
+        ? this.jwtHelper.getTokenExpirationDate(token)
+        : null;
+    } catch (error) {
+      console.warn('Error getting token expiration date:', error);
+      return null;
+    }
   }
 
   isTokenExpired(): boolean {
-    const token = this.getToken();
-    if (!token || !this.jwtHelper) {
-      return true;
-    }
-
     try {
+      const token = this.getToken();
+      if (!token || !this.jwtHelper) {
+        return true;
+      }
+
       return this.jwtHelper.isTokenExpired(token);
     } catch (error) {
       console.error('Error checking token expiration:', error);

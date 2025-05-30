@@ -12,14 +12,22 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(): boolean {
-    // Check if user is authenticated
-    if (this.authService.isAuthenticated()) {
-      return true;
-    }
+    try {
+      // Check if user is authenticated
+      if (this.authService.isAuthenticated()) {
+        console.log('✅ User authenticated, allowing access');
+        return true;
+      }
 
-    // If not authenticated, redirect to login page
-    this.router.navigate(['/login']);
-    return false;
+      // If not authenticated, redirect to login page
+      console.log('❌ User not authenticated, redirecting to login');
+      this.router.navigate(['/login']);
+      return false;
+    } catch (error) {
+      console.error('❌ Error in AuthGuard:', error);
+      this.router.navigate(['/login']);
+      return false;
+    }
   }
 }
 
@@ -33,13 +41,21 @@ export class NoAuthGuard implements CanActivate {
   ) {}
 
   canActivate(): boolean {
-    // Check if user is NOT authenticated
-    if (!this.authService.isAuthenticated()) {
+    try {
+      // Check if user is NOT authenticated
+      if (!this.authService.isAuthenticated()) {
+        console.log('✅ User not authenticated, allowing access to login');
+        return true;
+      }
+
+      // If authenticated, redirect to home page
+      console.log('✅ User authenticated, redirecting to home');
+      this.router.navigate(['/home']); // Changed from '/' to '/home'
+      return false;
+    } catch (error) {
+      console.error('❌ Error in NoAuthGuard:', error);
+      // If there's an error, assume not authenticated and allow access
       return true;
     }
-
-    // If authenticated, redirect to home page
-    this.router.navigate(['/']);
-    return false;
   }
 }

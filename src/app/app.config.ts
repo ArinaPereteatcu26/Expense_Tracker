@@ -1,23 +1,34 @@
-// app.config.ts or main.ts (for standalone components)
+// app.config.ts - Fixed version with proper interceptor setup
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
   provideHttpClient,
+  withInterceptors,
   withInterceptorsFromDi,
 } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
 import { importProvidersFrom } from '@angular/core';
 import { routes } from './app.routes';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 // JWT token getter function
 export function tokenGetter() {
-  return localStorage.getItem('authToken');
+  try {
+    return localStorage.getItem('authToken');
+  } catch (error) {
+    console.warn('Error getting token from localStorage:', error);
+    return null;
+  }
 }
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()),
+    // Use the functional interceptor approach
+    provideHttpClient(
+      withInterceptors([authInterceptor]),
+      withInterceptorsFromDi(),
+    ),
     // Add JWT module configuration for your ASP.NET backend
     importProvidersFrom(
       JwtModule.forRoot({
@@ -34,6 +45,5 @@ export const appConfig: ApplicationConfig = {
         },
       }),
     ),
-    // ... other providers
   ],
 };
