@@ -64,6 +64,13 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Check if user is authenticated
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('No authentication token found');
+      this.router.navigate(['/login']);
+      return;
+    }
     this.budgetCategories = this.budgetService.getBudgetCategories();
     this.budgets = this.budgetService.getBudgets();
     this.buildBudgetCards(this.budgets);

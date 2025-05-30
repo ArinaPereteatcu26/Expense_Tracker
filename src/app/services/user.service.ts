@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { of, BehaviorSubject, Observable } from 'rxjs';
 
 export interface User {
   id: string;
   name: string;
   createdAt: number;
+  token?: string; // Added token to user interface
 }
 
 @Injectable({
@@ -13,6 +14,7 @@ export interface User {
 })
 export class UserService {
   private readonly USER_KEY = 'budget_user';
+  private readonly TOKEN_KEY = 'budget_auth_token'; // Separate key for token
   private readonly BUDGETS_KEY = 'budget_data';
   private readonly EXPENSES_KEY = 'expense_data';
 
@@ -23,40 +25,44 @@ export class UserService {
     this.loadUserFromStorage();
   }
 
-  // Load user from local storage
   private loadUserFromStorage(): void {
     const storedUser = localStorage.getItem(this.USER_KEY);
     if (storedUser) {
       try {
-        this.userSubject.next(JSON.parse(storedUser));
+        const user = JSON.parse(storedUser);
+        // Verify token exists
+        const token = localStorage.getItem(this.TOKEN_KEY);
+        if (token) {
+          user.token = token;
+        }
+        this.userSubject.next(user);
       } catch (e) {
         console.error('Error parsing user data', e);
-        localStorage.removeItem(this.USER_KEY);
+        this.clearUserData();
       }
     }
   }
 
-  // Get current user
   getUser(): User | null {
     return this.userSubject.value;
   }
 
-  // Get user observable for subscribing to user changes
   getUserObservable(): Observable<User | null> {
     return this.userSubject.asObservable();
   }
 
-  // Check if user is logged in
   isLoggedIn(): boolean {
-    return !!this.userSubject.value;
+    return !!this.userSubject.value && !!localStorage.getItem(this.TOKEN_KEY);
   }
 
-  // Create a new user account
-  createAccount(name: string): void {
-    if (!name.trim()) return;
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
 
-    // First ensure all previous data is cleared
-    this.clearAllUserData();
+  createAccount(name: string): Observable<User> {
+    if (!name.trim()) throw new Error('Name is required');
+
+    this.clearUserData(); // Using the more specific method
 
     const newUser: User = {
       id: this.generateId(),
@@ -64,123 +70,118 @@ export class UserService {
       createdAt: Date.now(),
     };
 
+    // Generate a simple token (replace with real auth in production)
+    const token = this.generateAuthToken(newUser.id);
+
+    // Store user and token separately
     localStorage.setItem(this.USER_KEY, JSON.stringify(newUser));
+    localStorage.setItem(this.TOKEN_KEY, token);
+
+    // Include token in the user object
+    newUser.token = token;
     this.userSubject.next(newUser);
-    this.router.navigate(['/']);
+
+    return of(newUser);
   }
 
-  // Clear all user-related data
-  private clearAllUserData(): void {
-    // Remove standard keys
-    localStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem(this.BUDGETS_KEY);
-    localStorage.removeItem(this.EXPENSES_KEY);
-
-    // Clear any keys that might contain budget or expense data
-    const keysToRemove = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (
-        key &&
-        (key.includes('budget') ||
-          key.includes('expense') ||
-          key.includes('transaction') ||
-          key.includes('user'))
-      ) {
-        keysToRemove.push(key);
+  login(name: string): Observable<User> {
+    // In a real app, this would call an API endpoint
+    const user = this.getUser();
+    if (user && user.name === name.trim()) {
+      const token = localStorage.getItem(this.TOKEN_KEY);
+      if (token) {
+        user.token = token;
+        this.userSubject.next(user);
+        return of(user);
       }
     }
+    throw new Error('Login failed');
+  }
 
-    // Remove all collected keys
-    keysToRemove.forEach((key) => {
-      localStorage.removeItem(key);
-    });
+  logout(): void {
+    this.clearUserData();
+    this.router.navigate(['/login']);
+  }
+
+  private clearUserData(): void {
+    // Clear user and token
+    localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.TOKEN_KEY);
 
     // Reset user subject
     this.userSubject.next(null);
   }
 
-  // Show delete confirmation dialog
+  // Modified to preserve budgets/expenses when just logging out
+  private clearAllUserData(): void {
+    this.clearUserData();
+    localStorage.removeItem(this.BUDGETS_KEY);
+    localStorage.removeItem(this.EXPENSES_KEY);
+
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (key.includes('transaction') || key.includes('temp_'))) {
+        keysToRemove.push(key);
+      }
+    }
+
+    keysToRemove.forEach((key) => localStorage.removeItem(key));
+  }
+
+  // Only called when deleting account
+  confirmDeleteAccount(): void {
+    const userId = this.userSubject.value?.id;
+    this.clearAllApplicationData(); // Now includes all user data
+
+    if (userId) {
+      // Additional cleanup for user-specific data if needed
+    }
+
+    this.userSubject.next(null);
+    this.showDeleteConfirmationSubject.next(false);
+    this.router.navigate(['/login']);
+  }
+
+  private generateAuthToken(userId: string): string {
+    // Simple mock token - replace with real JWT in production
+    return btoa(
+      JSON.stringify({
+        userId,
+        created: Date.now(),
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
+      }),
+    );
+  }
+
+  // Rest of your existing methods remain unchanged...
   deleteUserAccount(): void {
     this.showDeleteConfirmationSubject.next(true);
   }
 
-  // Get the value of show delete confirmation
   getShowDeleteConfirmation(): boolean {
     return this.showDeleteConfirmationSubject.value;
   }
 
-  // Close delete confirmation dialog
   closeDeleteConfirmation(): void {
     this.showDeleteConfirmationSubject.next(false);
   }
 
-  // Confirm delete account
-  confirmDeleteAccount(): void {
-    // Get current user ID before deletion
-    const userId = this.userSubject.value?.id;
-
-    // Clear specific user data
-    localStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem(this.BUDGETS_KEY);
-    localStorage.removeItem(this.EXPENSES_KEY);
-
-    // Clear any data associated with this user ID
-    if (userId) {
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (
-          key &&
-          (key.includes(userId) ||
-            key.includes('budget') ||
-            key.includes('expense') ||
-            key.includes('transaction'))
-        ) {
-          localStorage.removeItem(key);
-        }
-      }
-    }
-
-    // Clear all other application data
-    this.clearAllApplicationData();
-
-    // Reset user subject
-    this.userSubject.next(null);
-
-    // Close the dialog
-    this.showDeleteConfirmationSubject.next(false);
-
-    // Redirect to create account page
-    this.router.navigate(['/login']);
-  }
-
-  // Clear all application data (add more keys as needed)
   private clearAllApplicationData(): void {
-    // Clear any other application-specific data
-    const keysToPreserve = ['theme_preference']; // Keep theme preference
-
-    // Get all localStorage keys
+    const keysToPreserve = ['theme_preference'];
     const keysToRemove = [];
+
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       if (key && !keysToPreserve.includes(key)) {
-        // Collect all keys that should be removed
         keysToRemove.push(key);
       }
     }
 
-    // Remove all collected keys
-    keysToRemove.forEach((key) => {
-      localStorage.removeItem(key);
-    });
-
-    console.log('All application data cleared successfully');
-
-    // Clear session storage too in case it's being used
+    keysToRemove.forEach((key) => localStorage.removeItem(key));
     sessionStorage.clear();
   }
 
-  // Generate a unique ID for user
   private generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }

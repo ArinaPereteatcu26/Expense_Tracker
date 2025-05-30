@@ -1,28 +1,39 @@
-import { ApplicationConfig, isDevMode } from '@angular/core';
+// app.config.ts or main.ts (for standalone components)
+import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
   provideHttpClient,
   withInterceptorsFromDi,
-  HTTP_INTERCEPTORS,
 } from '@angular/common/http';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { JwtModule } from '@auth0/angular-jwt';
+import { importProvidersFrom } from '@angular/core';
 import { routes } from './app.routes';
-import { provideServiceWorker } from '@angular/service-worker';
-import { AuthInterceptor } from './auth.interceptor';
+
+// JWT token getter function
+export function tokenGetter() {
+  return localStorage.getItem('authToken');
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000',
-    }),
     provideHttpClient(withInterceptorsFromDi()),
-    provideAnimations(),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
+    // Add JWT module configuration for your ASP.NET backend
+    importProvidersFrom(
+      JwtModule.forRoot({
+        config: {
+          tokenGetter: tokenGetter,
+          allowedDomains: ['localhost:5056'], // Your ASP.NET backend port
+          disallowedRoutes: [
+            'http://localhost:5056/api/auth/login',
+            'http://localhost:5056/api/auth/register',
+          ], // Routes that shouldn't include the token
+          headerName: 'Authorization',
+          authScheme: 'Bearer ',
+          skipWhenExpired: true,
+        },
+      }),
+    ),
+    // ... other providers
   ],
 };

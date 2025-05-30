@@ -1,39 +1,45 @@
-﻿import { Injectable } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-
+﻿import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from './services/auth.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-  ) {}
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const router = inject(Router);
+  const jwtHelper = inject(JwtHelperService);
 
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler,
-  ): Observable<HttpEvent<any>> {
-    // Add auth header with jwt if user is logged in and request is to the api url
-    const token = localStorage.getItem('token');
-    const isApiUrl = request.url.startsWith('http://localhost:5056/api');
+  const authToken = localStorage.getItem('authToken');
 
-    if (token && this.authService.isAuthenticated() && isApiUrl) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-
-    return next.handle(request);
+  // Skip for auth requests or if no token exists
+  if (req.url.includes('/auth/') || !authToken) {
+    return next(req);
   }
-}
+
+  // Check token expiration
+  if (jwtHelper.isTokenExpired(authToken)) {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser');
+    router.navigate(['/login'], { queryParams: { returnUrl: router.url } });
+    return next(req);
+  }
+
+  // Clone request and add auth header
+  const authReq = req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${authToken}`,
+      'X-Requested-With': 'XMLHttpRequest', // Security header
+    },
+  });
+
+  return next(authReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        router.navigate(['/login'], { queryParams: { returnUrl: router.url } });
+      }
+      return throwError(() => error);
+    }),
+  );
+};
