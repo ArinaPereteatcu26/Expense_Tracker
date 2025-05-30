@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 import { FormWrapperComponent } from '../../components/form-wrapper/form-wrapper.component';
 import {
   FormControl,
@@ -56,6 +57,7 @@ export class HomeComponent implements OnInit {
 
   constructor(
     public userService: UserService,
+    private authService: AuthService,
     private budgetService: BudgetService,
     private expenseService: ExpenseService,
     private router: Router,
@@ -106,6 +108,11 @@ export class HomeComponent implements OnInit {
         console.error(error);
       },
     });
+  }
+
+  getUsername(): string {
+    const user = this.authService.getUserFromToken();
+    return user?.username || user?.sub || 'Arina';
   }
 
   addBudget() {

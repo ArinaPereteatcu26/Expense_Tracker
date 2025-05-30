@@ -9,7 +9,7 @@ import {
 import { JwtModule } from '@auth0/angular-jwt';
 import { importProvidersFrom } from '@angular/core';
 import { routes } from './app.routes';
-import { authInterceptor } from './interceptors/auth.interceptor';
+import { authInterceptor } from './auth.interceptor';
 
 // JWT token getter function
 export function tokenGetter() {

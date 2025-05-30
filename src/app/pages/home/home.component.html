@@ -3,7 +3,7 @@
   <!-- Improved container padding for better mobile experience -->
   <div class="home-container px-6 sm:px-8 md:px-10 flex flex-col gap-y-8">
     <h1 class="mt-6 sm:mt-10 text-3xl sm:text-5xl md:text-7xl font-bold break-words text-gray-900 dark:text-gray-200">
-      Welcome back, <span class="text-roseCustom">{{userService.getUser()?.name}}</span>
+      Welcome back, <span class="text-roseCustom">{{getUsername()}}</span>
     </h1>
 
     <div class="input-container flex flex-col lg:flex-row w-full gap-4 lg:gap-8 mt-2 md:mt-6">

@@ -14,7 +14,7 @@ export interface User {
 })
 export class UserService {
   private readonly USER_KEY = 'budget_user';
-  private readonly TOKEN_KEY = 'budget_auth_token'; // Separate key for token
+  private readonly TOKEN_KEY = 'authToken'; // Separate key for token
   private readonly BUDGETS_KEY = 'budget_data';
   private readonly EXPENSES_KEY = 'expense_data';
 
@@ -52,7 +52,7 @@ export class UserService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.userSubject.value && !!localStorage.getItem(this.TOKEN_KEY);
+    return !!localStorage.getItem(this.TOKEN_KEY); // Remove user object requirement
   }
 
   getToken(): string | null {
