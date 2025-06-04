@@ -9,7 +9,6 @@ import {
 import { JwtModule } from '@auth0/angular-jwt';
 import { importProvidersFrom } from '@angular/core';
 import { routes } from './app.routes';
-import { authInterceptor } from './auth.interceptor';
 
 // JWT token getter function
 export function tokenGetter() {
@@ -25,10 +24,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     // Use the functional interceptor approach
-    provideHttpClient(
-      withInterceptors([authInterceptor]),
-      withInterceptorsFromDi(),
-    ),
+    provideHttpClient(),
     // Add JWT module configuration for your ASP.NET backend
     importProvidersFrom(
       JwtModule.forRoot({

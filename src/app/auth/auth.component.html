@@ -1,11 +1,12 @@
+<!--
 <section class="bg-white dark:bg-gray-900 body-font transition-all">
   <div class="create-account-container px-4 py-12 sm:py-16 md:py-20 flex flex-col gap-y-10">
     <div class="container max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-xl bg-pinkCustom dark:bg-gray-700">
       <div class="flex flex-col lg:flex-row">
-        <!-- Left Section -->
+        &lt;!&ndash; Left Section &ndash;&gt;
         <div [formGroup]="authForm" class="left-section flex flex-col p-6 sm:p-8 md:p-10 lg:p-12 justify-center flex-1 gap-y-4 sm:gap-y-6">
 
-          <!-- Header -->
+          &lt;!&ndash; Header &ndash;&gt;
           <div class="mb-2">
             <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-gray-100">Register</h1>
             <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300 mt-4 max-w-lg">
@@ -13,11 +14,11 @@
             </p>
           </div>
 
-          <!-- Form -->
+          &lt;!&ndash; Form &ndash;&gt;
           <app-form-wrapper>
             <div class="space-y-4 sm:space-y-6 my-2 sm:my-4">
 
-              <!-- Username -->
+              &lt;!&ndash; Username &ndash;&gt;
               <div class="relative">
                 <label for="username" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">Username</label>
                 <input
@@ -34,7 +35,7 @@
                 </p>
               </div>
 
-              <!-- Role Selection -->
+              &lt;!&ndash; Role Selection &ndash;&gt;
               <div class="relative">
                 <label for="role" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">Role</label>
                 <select
@@ -49,7 +50,7 @@
                 </select>
               </div>
 
-              <!-- Custom Permissions (non-admin only) -->
+              &lt;!&ndash; Custom Permissions (non-admin only) &ndash;&gt;
               <div *ngIf="authForm.get('role')?.value !== 'ADMIN'" class="relative">
                 <label class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Custom Permissions (optional)</label>
                 <div class="space-y-2">
@@ -71,7 +72,7 @@
                 </div>
               </div>
 
-              <!-- Submit Button -->
+              &lt;!&ndash; Submit Button &ndash;&gt;
               <button
                 [disabled]="!isFormValid || loading"
                 (click)="onSubmit()"
@@ -81,7 +82,7 @@
                 <span *ngIf="loading">Submitting...</span>
               </button>
 
-              <!-- Error Message -->
+              &lt;!&ndash; Error Message &ndash;&gt;
               <div *ngIf="error" class="text-red-600 dark:text-red-400 text-sm bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
                 {{ error }}
               </div>
@@ -90,7 +91,7 @@
           </app-form-wrapper>
         </div>
 
-        <!-- Right Image Section -->
+        &lt;!&ndash; Right Image Section &ndash;&gt;
         <div class="right-section flex-1 bg-roseCustom/5 dark:bg-roseCustom/10 hidden lg:block">
           <div class="h-full flex items-center justify-center p-6 lg:p-8">
             <img src="assets/Budget.jpg" alt="Budget planning illustration"
@@ -107,3 +108,4 @@
   </div>
   <app-footer></app-footer>
 </section>
+-->

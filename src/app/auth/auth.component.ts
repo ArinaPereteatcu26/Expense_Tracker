@@ -1,3 +1,4 @@
+/*
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -304,3 +305,4 @@ export class AuthComponent implements OnInit {
     );
   }
 }
+*/

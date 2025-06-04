@@ -1,4 +1,5 @@
-﻿// auth.interceptor.ts - Fixed version with better error handling
+﻿/*
+// auth.interceptor.ts - Fixed version with better error handling
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
@@ -63,3 +64,4 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 };
+*/

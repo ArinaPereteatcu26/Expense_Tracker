@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { TOKEN_KEY } from '../constants';
+import { Router } from '@angular/router';
 
 interface RegisterRequest {
   username: string;
@@ -34,6 +36,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private jwtHelper: JwtHelperService,
+    private router: Router,
   ) {
     // Initialize the BehaviorSubject AFTER dependencies are injected
     this.isAuthenticatedSubject = new BehaviorSubject<boolean>(
@@ -57,27 +60,21 @@ export class AuthService {
       );
   }
 
-  login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/api/auth/login`, request)
-      .pipe(
-        tap((response) => {
-          if (response.token) {
-            this.setToken(response.token);
-          }
-        }),
-        catchError((error) => {
-          console.error('Login failed:', error);
-          throw error;
-        }),
-      );
+  isLoggedIn() {
+    return localStorage.getItem(TOKEN_KEY) != null;
   }
 
+  deleteToken() {
+    localStorage.removeItem(TOKEN_KEY);
+  }
   logout(): void {
-    localStorage.removeItem(this.tokenKey);
-    // Also remove any other user-related data
-    localStorage.removeItem('currentUser');
+    this.deleteToken();
     this.isAuthenticatedSubject.next(false);
+    this.router.navigateByUrl('/login');
+  }
+
+  saveToken(token: string) {
+    localStorage.setItem(TOKEN_KEY, token);
   }
 
   isAuthenticated(): boolean {
