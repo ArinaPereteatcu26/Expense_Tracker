@@ -1,0 +1,91 @@
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+  <form
+    [formGroup]="form"
+    class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6"
+    (ngSubmit)="onSubmit()"
+  >
+    <h2 class="text-2xl font-bold text-center text-gray-700">Sign Up</h2>
+
+    <div>
+      <label for="fullName" class="block text-sm font-medium text-gray-800">Full Name</label>
+      <input
+        id="fullName"
+        formControlName="fullName"
+        type="text"
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 placeholder-gray-300"
+        placeholder="Enter your full name"
+      />
+
+      <div class="error-feedback" *ngIf="hasDisplayableError('fullName')">
+        <div *ngIf="form.controls.fullName.hasError('required')">
+          Please enter your full name
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label for="email" class="block text-sm font-medium text-gray-800">Email</label>
+      <input
+        id="email"
+        formControlName="email"
+        type="email"
+        class="placeholder-gray-300 mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+        placeholder="email@example.com"
+      />
+
+      <!-- Show required error when field is required but empty -->
+      <div class="error-feedback" *ngIf="hasDisplayableError('email') && form.controls.email.hasError('required')">
+        Please enter an email address
+      </div>
+
+      <!-- Show email format error when field has content but invalid format -->
+      <div class="error-feedback" *ngIf="hasDisplayableError('email') && form.controls.email.hasError('email') && !form.controls.email.hasError('required')">
+        Please enter a valid email address
+      </div>
+    </div>
+
+    <div>
+      <label for="password" class="block text-sm font-medium text-gray-800">Password</label>
+      <input
+        id="password"
+        formControlName="password"
+        type="password"
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+      />
+    </div>
+    <div class="error-feedback" *ngIf="hasDisplayableError('password')">
+    <ng-container [ngSwitch]="form.control.password.errors | firstKey">
+      <div *ngSwitchCase= "'required'">
+        Please enter password.
+      </div>
+      <div *ngSwitchCase="'minlength'">
+        At least 6 characters required.
+      </div>
+      <div *ngSwitchCase="'pattern'">
+        One or more special character.
+      </div>
+    </ng-container>
+  </div>
+
+    <div>
+      <label for="confirmPassword" class="block text-sm font-medium text-gray-800">Confirm Password</label>
+      <input
+        id="confirmPassword"
+        formControlName="confirmPassword"
+        type="password"
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+      />
+      <div class="error-feedback" *ngIf="hasDisplayableError('confirmPassword') && form.controls.confirmPassword.hasError('passwordMismatch')">
+        Password does not match
+      </div>
+
+    <button
+      type="submit"
+      class="mt-5 w-full py-2 px-4 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 transition duration-300"
+      [disabled]="form.invalid"
+    >
+      Register
+    </button>
+    </div>
+  </form>
+</div>
