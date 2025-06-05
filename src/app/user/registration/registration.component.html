@@ -16,8 +16,8 @@
         placeholder="Enter your full name"
       />
 
-      <div class="error-feedback" *ngIf="hasDisplayableError('fullName')">
-        <div *ngIf="form.controls.fullName.hasError('required')">
+      <div class="error-feedback text-red-500 text-sm mt-1" *ngIf="hasDisplayableError('fullName')">
+        <div *ngIf="form.controls['fullName'].hasError('required')">
           Please enter your full name
         </div>
       </div>
@@ -33,13 +33,11 @@
         placeholder="email@example.com"
       />
 
-      <!-- Show required error when field is required but empty -->
-      <div class="error-feedback" *ngIf="hasDisplayableError('email') && form.controls.email.hasError('required')">
+      <div class="error-feedback text-red-500 text-sm mt-1" *ngIf="hasDisplayableError('email') && form.controls['email'].hasError('required')">
         Please enter an email address
       </div>
 
-      <!-- Show email format error when field has content but invalid format -->
-      <div class="error-feedback" *ngIf="hasDisplayableError('email') && form.controls.email.hasError('email') && !form.controls.email.hasError('required')">
+      <div class="error-feedback text-red-500 text-sm mt-1" *ngIf="hasDisplayableError('email') && form.controls['email'].hasError('email') && !form.controls['email'].hasError('required')">
         Please enter a valid email address
       </div>
     </div>
@@ -52,20 +50,21 @@
         type="password"
         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
       />
+
+      <div class="error-feedback text-red-500 text-sm mt-1" *ngIf="hasDisplayableError('password')">
+        <ng-container [ngSwitch]="form.controls['password'].errors | firstKey">
+          <div *ngSwitchCase="'required'">
+            Please enter password.
+          </div>
+          <div *ngSwitchCase="'minlength'">
+            At least 6 characters required.
+          </div>
+          <div *ngSwitchCase="'pattern'">
+            Password must contain at least one special character.
+          </div>
+        </ng-container>
+      </div>
     </div>
-    <div class="error-feedback" *ngIf="hasDisplayableError('password')">
-    <ng-container [ngSwitch]="form.control.password.errors | firstKey">
-      <div *ngSwitchCase= "'required'">
-        Please enter password.
-      </div>
-      <div *ngSwitchCase="'minlength'">
-        At least 6 characters required.
-      </div>
-      <div *ngSwitchCase="'pattern'">
-        One or more special character.
-      </div>
-    </ng-container>
-  </div>
 
     <div>
       <label for="confirmPassword" class="block text-sm font-medium text-gray-800">Confirm Password</label>
@@ -75,17 +74,17 @@
         type="password"
         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
       />
-      <div class="error-feedback" *ngIf="hasDisplayableError('confirmPassword') && form.controls.confirmPassword.hasError('passwordMismatch')">
-        Password does not match
+      <div class="error-feedback text-red-500 text-sm mt-1" *ngIf="hasDisplayableError('confirmPassword') && form.controls['confirmPassword'].hasError('passwordMismatch')">
+        Passwords do not match
       </div>
+    </div>
 
     <button
       type="submit"
-      class="mt-5 w-full py-2 px-4 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 transition duration-300"
+      class="mt-5 w-full py-2 px-4 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 transition duration-300 disabled:opacity-50"
       [disabled]="form.invalid"
     >
       Register
     </button>
-    </div>
   </form>
 </div>

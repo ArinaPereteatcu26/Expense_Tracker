@@ -1,11 +1,12 @@
-// auth.service.ts - Fixed version with better error handling
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, of } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { TOKEN_KEY } from '../constants';
 import { Router } from '@angular/router';
+
+// Use consistent token key
+const TOKEN_KEY = 'authToken';
 
 interface RegisterRequest {
   username: string;
@@ -29,8 +30,7 @@ interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5056'; // Your ASP.NET backend URL
-  private tokenKey = 'authToken';
+  private apiUrl = 'http://localhost:5056';
   private isAuthenticatedSubject!: BehaviorSubject<boolean>;
 
   constructor(
@@ -38,15 +38,32 @@ export class AuthService {
     private jwtHelper: JwtHelperService,
     private router: Router,
   ) {
-    // Initialize the BehaviorSubject AFTER dependencies are injected
     this.isAuthenticatedSubject = new BehaviorSubject<boolean>(
       this.hasValidToken(),
     );
   }
 
+  createUser(userData: any): Observable<any> {
+    console.log(
+      'Sending registration request to:',
+      this.apiUrl + '/api/signup',
+    );
+    console.log('User data:', userData);
+
+    return this.http.post(this.apiUrl + '/api/signup', userData).pipe(
+      tap((response) => {
+        console.log('Registration response received:', response);
+      }),
+      catchError((error) => {
+        console.error('Registration request failed:', error);
+        throw error;
+      }),
+    );
+  }
+
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/api/auth/register`, request)
+      .post<AuthResponse>(`${this.apiUrl}/api/signup`, request)
       .pipe(
         tap((response) => {
           if (response.token) {
@@ -60,20 +77,21 @@ export class AuthService {
       );
   }
 
-  isLoggedIn() {
+  isLoggedIn(): boolean {
     return localStorage.getItem(TOKEN_KEY) != null;
   }
 
-  deleteToken() {
-    localStorage.removeItem(TOKEN_KEY);
-  }
   logout(): void {
     this.deleteToken();
     this.isAuthenticatedSubject.next(false);
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('/api/signup');
   }
 
-  saveToken(token: string) {
+  private deleteToken(): void {
+    localStorage.removeItem(TOKEN_KEY);
+  }
+
+  private saveToken(token: string): void {
     localStorage.setItem(TOKEN_KEY, token);
   }
 
@@ -88,7 +106,7 @@ export class AuthService {
 
   getToken(): string | null {
     try {
-      return localStorage.getItem(this.tokenKey);
+      return localStorage.getItem(TOKEN_KEY);
     } catch (error) {
       console.warn('Error getting token from localStorage:', error);
       return null;
@@ -123,7 +141,6 @@ export class AuthService {
       const user = this.getUserFromToken();
       if (!user?.permission) return [];
 
-      // Handle both single permission and array of permissions
       return Array.isArray(user.permission)
         ? user.permission
         : [user.permission];
@@ -155,7 +172,7 @@ export class AuthService {
 
   private setToken(token: string): void {
     try {
-      localStorage.setItem(this.tokenKey, token);
+      this.saveToken(token);
       this.isAuthenticatedSubject.next(true);
     } catch (error) {
       console.error('Error setting token:', error);
@@ -166,21 +183,17 @@ export class AuthService {
     try {
       const token = this.getToken();
 
-      // If no token exists, return false
       if (!token) {
         return false;
       }
 
-      // If jwtHelper is not available (during initialization), assume token is valid
       if (!this.jwtHelper) {
         console.warn('JwtHelper not available during token validation');
         return true;
       }
 
-      // Check if token is expired
       const isExpired = this.jwtHelper.isTokenExpired(token);
 
-      // If token is expired, clean up
       if (isExpired) {
         this.logout();
         return false;
@@ -189,18 +202,15 @@ export class AuthService {
       return true;
     } catch (error) {
       console.error('Error validating token:', error);
-      // If there's an error, assume token is invalid and clean up
       this.logout();
       return false;
     }
   }
 
-  // Observable for authentication status
   get isAuthenticated$(): Observable<boolean> {
     return this.isAuthenticatedSubject.asObservable();
   }
 
-  // Token expiration check
   getTokenExpirationDate(): Date | null {
     try {
       const token = this.getToken();

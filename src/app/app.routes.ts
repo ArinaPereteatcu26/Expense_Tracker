@@ -6,11 +6,11 @@ import { RegistrationComponent } from './user/registration/registration.componen
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/login',
+    redirectTo: '/signup',
     pathMatch: 'full',
   },
   {
-    path: 'signin',
+    path: 'signup',
     component: RegistrationComponent,
   },
 
@@ -30,6 +30,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/login',
+    redirectTo: '/signup',
   },
 ];
