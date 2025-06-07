@@ -61,20 +61,8 @@ export class AuthService {
     );
   }
 
-  register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/api/signup`, request)
-      .pipe(
-        tap((response) => {
-          if (response.token) {
-            this.setToken(response.token);
-          }
-        }),
-        catchError((error) => {
-          console.error('Registration failed:', error);
-          throw error;
-        }),
-      );
+  signin(formData: any) {
+    return this.http.post(this.apiUrl + '/signin', formData);
   }
 
   isLoggedIn(): boolean {
