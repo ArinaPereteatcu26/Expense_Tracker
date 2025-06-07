@@ -1,90 +1,119 @@
-<div class="flex justify-center items-center min-h-screen bg-gray-100">
-  <form
-    [formGroup]="form"
-    class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6"
-    (ngSubmit)="onSubmit()"
-  >
-    <h2 class="text-2xl font-bold text-center text-gray-700">Sign Up</h2>
+<div class="pt-20 min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md mx-auto">
+    <form
+      [formGroup]="form"
+      class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8 space-y-6"
+      (ngSubmit)="onSubmit()"
+    >
+      <!-- Header -->
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+          Create Account
+        </h2>
+        <p class="text-gray-500 dark:text-gray-400">Join HomeBudget today</p>
+      </div>
 
-    <div>
-      <label for="fullName" class="block text-sm font-medium text-gray-800">Full Name</label>
-      <input
-        id="fullName"
-        formControlName="fullName"
-        type="text"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 placeholder-gray-300"
-        placeholder="Enter your full name"
-      />
-
-      <div class="error-feedback text-red-500 text-sm mt-1" *ngIf="hasDisplayableError('fullName')">
-        <div *ngIf="form.controls['fullName'].hasError('required')">
-          Please enter your full name
+      <!-- Full Name Field -->
+      <div class="space-y-2">
+        <label for="fullName" class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+          Full Name
+        </label>
+        <input
+          id="fullName"
+          formControlName="fullName"
+          type="text"
+          class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-0 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-4 focus:ring-pink-500/20 focus:bg-white dark:focus:bg-slate-600 transition-all duration-300"
+          placeholder="Enter your full name"
+        />
+        <div class="text-red-500 text-sm font-medium" *ngIf="hasDisplayableError('fullName')">
+          <div *ngIf="form.controls['fullName'].hasError('required')">
+            Please enter your full name
+          </div>
         </div>
       </div>
-    </div>
 
-    <div>
-      <label for="email" class="block text-sm font-medium text-gray-800">Email</label>
-      <input
-        id="email"
-        formControlName="email"
-        type="email"
-        class="placeholder-gray-300 mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
-        placeholder="email@example.com"
-      />
-
-      <div class="error-feedback text-red-500 text-sm mt-1" *ngIf="hasDisplayableError('email') && form.controls['email'].hasError('required')">
-        Please enter an email address
+      <!-- Email Field -->
+      <div class="space-y-2">
+        <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+          Email Address
+        </label>
+        <input
+          id="email"
+          formControlName="email"
+          type="email"
+          class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-0 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-4 focus:ring-pink-500/20 focus:bg-white dark:focus:bg-slate-600 transition-all duration-300"
+          placeholder="your@email.com"
+        />
+        <div class="text-red-500 text-sm font-medium" *ngIf="hasDisplayableError('email') && form.controls['email'].hasError('required')">
+          Please enter an email address
+        </div>
+        <div class="text-red-500 text-sm font-medium" *ngIf="hasDisplayableError('email') && form.controls['email'].hasError('email') && !form.controls['email'].hasError('required')">
+          Please enter a valid email address
+        </div>
       </div>
 
-      <div class="error-feedback text-red-500 text-sm mt-1" *ngIf="hasDisplayableError('email') && form.controls['email'].hasError('email') && !form.controls['email'].hasError('required')">
-        Please enter a valid email address
+      <!-- Password Field -->
+      <div class="space-y-2">
+        <label for="password" class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+          Password
+        </label>
+        <input
+          id="password"
+          formControlName="password"
+          type="password"
+          class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-0 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-4 focus:ring-pink-500/20 focus:bg-white dark:focus:bg-slate-600 transition-all duration-300"
+          placeholder="Create a strong password"
+        />
+        <div class="text-red-500 text-sm font-medium" *ngIf="hasDisplayableError('password')">
+          <ng-container [ngSwitch]="form.controls['password'].errors | firstKey">
+            <div *ngSwitchCase="'required'">
+              Please enter a password
+            </div>
+            <div *ngSwitchCase="'minlength'">
+              Password must be at least 6 characters
+            </div>
+            <div *ngSwitchCase="'pattern'">
+              Password must contain at least one special character
+            </div>
+          </ng-container>
+        </div>
       </div>
-    </div>
 
-    <div>
-      <label for="password" class="block text-sm font-medium text-gray-800">Password</label>
-      <input
-        id="password"
-        formControlName="password"
-        type="password"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
-      />
-
-      <div class="error-feedback text-red-500 text-sm mt-1" *ngIf="hasDisplayableError('password')">
-        <ng-container [ngSwitch]="form.controls['password'].errors | firstKey">
-          <div *ngSwitchCase="'required'">
-            Please enter password.
-          </div>
-          <div *ngSwitchCase="'minlength'">
-            At least 6 characters required.
-          </div>
-          <div *ngSwitchCase="'pattern'">
-            Password must contain at least one special character.
-          </div>
-        </ng-container>
+      <!-- Confirm Password Field -->
+      <div class="space-y-2">
+        <label for="confirmPassword" class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+          Confirm Password
+        </label>
+        <input
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          type="password"
+         class= "w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border-0 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-4 focus:ring-pink-500/20 focus:bg-white dark:focus:bg-slate-600 transition-all duration-300 "
+             placeholder="Confirm your password"
+        />
+        <div class="text-red-500 text-sm font-medium" *ngIf="hasDisplayableError('confirmPassword') && form.controls['confirmPassword'].hasError('passwordMismatch')">
+          Passwords do not match
+        </div>
       </div>
-    </div>
 
-    <div>
-      <label for="confirmPassword" class="block text-sm font-medium text-gray-800">Confirm Password</label>
-      <input
-        id="confirmPassword"
-        formControlName="confirmPassword"
-        type="password"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
-      />
-      <div class="error-feedback text-red-500 text-sm mt-1" *ngIf="hasDisplayableError('confirmPassword') && form.controls['confirmPassword'].hasError('passwordMismatch')">
-        Passwords do not match
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="w-full py-3 px-6 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+        [disabled]="form.invalid"
+      >
+        Create Account
+      </button>
+
+      <!-- Sign In Link -->
+      <div class="text-center pt-4">
+        <p class="text-gray-600 dark:text-gray-400">
+          Already have an account?
+          <a href="/signin" class="text-pink-600 hover:text-pink-700 font-semibold transition-colors duration-200">
+            Sign In
+          </a>
+        </p>
       </div>
-    </div>
-
-    <button
-      type="submit"
-      class="mt-5 w-full py-2 px-4 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 transition duration-300 disabled:opacity-50"
-      [disabled]="form.invalid"
-    >
-      Register
-    </button>
-  </form>
+    </form>
+  </div>
 </div>
