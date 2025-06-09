@@ -9,12 +9,7 @@ import { UserService } from './services/user.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    NavBarComponent,
-    CommonModule,
-    DeleteConfirmationDialogComponent,
-  ],
+  imports: [RouterOutlet, CommonModule, DeleteConfirmationDialogComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

@@ -5,6 +5,9 @@ import { RegistrationComponent } from './user/registration/registration.componen
 import { UserComponent } from './user/user.component';
 import { LoginComponent } from './user/login/login.component';
 
+import { DashboardComponent } from './dashboard/dashboard.component';
+
+
 export const routes: Routes = [
   {
     path: 'home',
@@ -23,8 +26,17 @@ export const routes: Routes = [
     component: RegistrationComponent,
   },
   {
+
+    path: 'dashboard',
+    component: DashboardComponent,
+  },
+  {
+    path: '',
+    redirectTo: '/signin',
+
     path: '',
     redirectTo: 'login',
+
     pathMatch: 'full',
   },
 ];
