@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { Router } from '@angular/router';
 
 @Component({
@@ -13,4 +14,8 @@ export class DashboardComponent {
     localStorage.removeItem('token');
     this.router.navigateByUrl('/signin');
   }
+  styleUrl: './dashboard.component.scss'
+})
+export class DashboardComponent {
+
 }
