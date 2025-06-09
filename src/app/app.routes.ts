@@ -4,6 +4,7 @@ import { BudgetDetailsComponent } from './pages/budget-details/budget-details.co
 import { RegistrationComponent } from './user/registration/registration.component';
 import { UserComponent } from './user/user.component';
 import { LoginComponent } from './user/login/login.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 export const routes: Routes = [
   {
@@ -23,8 +24,12 @@ export const routes: Routes = [
     component: RegistrationComponent,
   },
   {
+    path: 'dashboard',
+    component: DashboardComponent,
+  },
+  {
     path: '',
-    redirectTo: 'login',
+    redirectTo: '/signin',
     pathMatch: 'full',
   },
 ];
