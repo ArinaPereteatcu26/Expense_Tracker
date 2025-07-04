@@ -111,7 +111,7 @@ export class HomeComponent implements OnInit {
   }
 
   getUsername(): string {
-    const user = this.authService.getUserFromToken();
+    const user = this.authService.getClaims();
     return user?.username || user?.sub || 'Arina';
   }
 

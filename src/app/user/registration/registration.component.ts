@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -11,6 +11,7 @@ import {
 import { FirstKeyPipe } from '../../shared/pipes/first-key.pipe';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
@@ -19,7 +20,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './registration.component.html',
   styles: ``,
 })
-export class RegistrationComponent {
+export class RegistrationComponent implements OnInit {
   form: FormGroup;
   isSubmitted: boolean = false;
 
@@ -27,10 +28,11 @@ export class RegistrationComponent {
     private formBuilder: FormBuilder,
     private service: AuthService,
     private toastr: ToastrService,
+    private router: Router,
   ) {
     this.form = this.formBuilder.group(
       {
-        fullName: ['', Validators.required],
+        username: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
         password: [
           '',
@@ -45,7 +47,9 @@ export class RegistrationComponent {
       { validators: this.passwordMatchValidator },
     );
   }
-
+  ngOnInit(): void {
+    if (this.service.isLoggedIn()) this.router.navigateByUrl('/dashboard');
+  }
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): null => {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
@@ -68,7 +72,7 @@ export class RegistrationComponent {
   onSubmit() {
     this.isSubmitted = true;
     if (this.form.valid) {
-      this.service.createUser(this.form.value).subscribe({
+      this.service.register(this.form.value).subscribe({
         next: (res: any) => {
           if (res.succeeded) {
             this.form.reset();

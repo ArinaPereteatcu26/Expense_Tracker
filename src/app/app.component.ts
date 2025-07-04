@@ -5,11 +5,12 @@ import { DarkModeService } from './services/dark-mode.service';
 import { CommonModule } from '@angular/common';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { UserService } from './services/user.service';
+import { FooterComponent } from './footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, DeleteConfirmationDialogComponent],
+  imports: [RouterOutlet, CommonModule, NavBarComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -18,8 +19,10 @@ export class AppComponent {
 
   darkModeService: DarkModeService = inject(DarkModeService);
   userService: UserService = inject(UserService);
+}
 
-  // Use this to control the display of the delete confirmation dialog
+// Use this to control the display of the delete confirmation dialog
+/*
   get showDeleteDialog(): boolean {
     return this.userService.getShowDeleteConfirmation();
   }
@@ -32,3 +35,4 @@ export class AppComponent {
     this.userService.closeDeleteConfirmation();
   }
 }
+*/

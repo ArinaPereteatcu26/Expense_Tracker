@@ -12,6 +12,7 @@ import { routes } from './app.routes';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { authInterceptor } from './shared/auth.interceptor';
 
 // JWT token getter function
 export function tokenGetter() {
@@ -27,7 +28,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     // Use the functional interceptor approach
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideToastr({ positionClass: 'toast-top-center' }),
     provideAnimationsAsync(),
     // Add JWT module configuration for your ASP.NET backend

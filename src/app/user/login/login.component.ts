@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, LoginRequest } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styles: ``,
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   isSubmitted: boolean = false;
 
   form!: FormGroup<{
@@ -43,6 +43,9 @@ export class LoginComponent {
       }),
     });
   }
+  ngOnInit(): void {
+    if (this.service.isLoggedIn()) this.router.navigateByUrl('/dashboard');
+  }
 
   hasDisplayableError(controlName: string): boolean {
     const control = this.form.get(controlName);
@@ -55,9 +58,8 @@ export class LoginComponent {
   onSubmit() {
     this.isSubmitted = true;
     if (this.form.valid) {
-      this.service.signin(this.form.value).subscribe({
+      this.service.login(this.form.value as LoginRequest).subscribe({
         next: (res: any) => {
-          localStorage.setItem('token', res.token);
           this.router.navigateByUrl('/dashboard');
         },
         error: (err) => {

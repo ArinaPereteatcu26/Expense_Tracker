@@ -3,6 +3,7 @@ import { Expense } from '../interfaces/models/expense.interface';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { TableDataConfig } from '../interfaces/ui-config/table-data-config.interface';
 import { BudgetService } from './budget.service';
+import { AuthService } from './auth.service';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -18,9 +19,10 @@ export class ExpenseService {
   constructor(
     private budgetService: BudgetService,
     private userService: UserService,
+    private authService: AuthService,
   ) {
     // Initialize expenses if a user is already logged in
-    if (this.userService.isLoggedIn()) {
+    if (this.authService.isLoggedIn()) {
       this.initializeExpenses();
     }
 

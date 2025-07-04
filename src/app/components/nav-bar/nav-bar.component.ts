@@ -24,7 +24,7 @@ export class NavBarComponent {
 
   isAuthenticated(): boolean {
     try {
-      return this.authService.isAuthenticated();
+      return this.authService.isLoggedIn();
     } catch (error) {
       console.warn('Error checking authentication status:', error);
       return false;
@@ -33,7 +33,7 @@ export class NavBarComponent {
 
   getUserName(): string {
     try {
-      const user = this.authService.getUserFromToken();
+      const user = this.authService.getClaims();
       return user?.username || user?.name || 'User';
     } catch (error) {
       console.warn('Error getting user name:', error);

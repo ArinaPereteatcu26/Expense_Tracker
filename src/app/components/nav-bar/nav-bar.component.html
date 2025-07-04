@@ -29,7 +29,7 @@
     </div>
 
     <!-- Delete Button-->
-    @if (userService.isLoggedIn()){
+  <!--  @if (userService.isLoggedIn()){
       <button (click)="userService.deleteUserAccount()" class="flex items-center gap-x-1 sm:gap-x-2 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 bg-pinkCustom hover:bg-pink-300 dark:bg-pink-700 dark:hover:bg-pink-600 text-pink-900 dark:text-white rounded-full shadow-sm transition-colors font-medium sm:font-semibold text-xs sm:text-sm">
         <span class="hidden xs:inline">Delete</span>
         <span class="hidden sm:inline">User</span>
@@ -39,13 +39,14 @@
       </button>
     }
   </nav>
-
+-->
   <!-- Delete Confirmation Dialog -->
-  @if (userService.getShowDeleteConfirmation()) {
+  <!--@if (userService.getShowDeleteConfirmation()) {
     <app-delete-confirmation-dialog
       (confirmed)="userService.confirmDeleteAccount()"
       (cancelled)="userService.closeDeleteConfirmation()"
     ></app-delete-confirmation-dialog>
-  }
+  }-->
+  </nav>
 </header>
 

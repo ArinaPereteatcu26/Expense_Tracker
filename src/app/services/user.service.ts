@@ -1,40 +1,67 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { of, BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { AuthService } from './auth.service';
+import { tap } from 'rxjs/operators';
 
 export interface User {
   id: string;
   name: string;
+  username?: string;
+  email?: string;
   createdAt: number;
-  token?: string; // Added token to user interface
+  role?: string;
+  permissions?: string[];
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private readonly USER_KEY = 'budget_user';
-  private readonly TOKEN_KEY = 'authToken'; // Separate key for token
+  private readonly USER_KEY = 'user_profile';
   private readonly BUDGETS_KEY = 'budget_data';
   private readonly EXPENSES_KEY = 'expense_data';
 
   private userSubject = new BehaviorSubject<User | null>(null);
   private showDeleteConfirmationSubject = new BehaviorSubject<boolean>(false);
 
-  constructor(private router: Router) {
-    this.loadUserFromStorage();
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+  ) {
+    // Load user profile when service initializes
+    this.initializeUserProfile();
+  }
+
+  // Initialize user profile from token or storage
+  private initializeUserProfile(): void {
+    if (this.authService.isLoggedIn()) {
+      const tokenUser = this.authService.getClaims();
+      if (tokenUser) {
+        // Create user object from token data
+        const user: User = {
+          id: tokenUser.sub || tokenUser.userId || tokenUser.id,
+          name: tokenUser.name || tokenUser.username,
+          username: tokenUser.username,
+          email: tokenUser.email,
+          createdAt: tokenUser.iat ? tokenUser.iat * 1000 : Date.now(),
+          role: tokenUser.role,
+          permissions: tokenUser.permissions || [],
+        };
+        this.userSubject.next(user);
+      } else {
+        // Fallback: try to load from localStorage
+        this.loadUserFromStorage();
+      }
+    }
   }
 
   private loadUserFromStorage(): void {
     const storedUser = localStorage.getItem(this.USER_KEY);
-    if (storedUser) {
+    if (storedUser && this.authService.isLoggedIn()) {
       try {
         const user = JSON.parse(storedUser);
-        // Verify token exists
-        const token = localStorage.getItem(this.TOKEN_KEY);
-        if (token) {
-          user.token = token;
-        }
         this.userSubject.next(user);
       } catch (e) {
         console.error('Error parsing user data', e);
@@ -43,128 +70,65 @@ export class UserService {
     }
   }
 
-  getUser(): User | null {
-    return this.userSubject.value;
+  // API calls for user profile
+  getUserProfile(): Observable<User> {
+    return this.http.get<User>(`${environment.apiUrl}/userprofile`);
   }
 
+  updateUserProfile(userData: Partial<User>): Observable<User> {
+    return this.http.put<User>(`${environment.apiUrl}/userprofile`, userData);
+  }
+
+  deleteUserAccount(): Observable<any> {
+    return this.http.delete(`${environment.apiUrl}/userprofile`);
+  }
+
+  // User state management
   getUserObservable(): Observable<User | null> {
     return this.userSubject.asObservable();
   }
 
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem(this.TOKEN_KEY); // Remove user object requirement
+  getCurrentUser(): User | null {
+    return this.userSubject.value;
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+  updateCurrentUser(user: User): void {
+    this.userSubject.next(user);
+    // Optionally store in localStorage for offline access
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
   }
 
-  createAccount(name: string): Observable<User> {
-    if (!name.trim()) throw new Error('Name is required');
-
-    this.clearUserData(); // Using the more specific method
-
-    const newUser: User = {
-      id: this.generateId(),
-      name: name.trim(),
-      createdAt: Date.now(),
-    };
-
-    // Generate a simple token (replace with real auth in production)
-    const token = this.generateAuthToken(newUser.id);
-
-    // Store user and token separately
-    localStorage.setItem(this.USER_KEY, JSON.stringify(newUser));
-    localStorage.setItem(this.TOKEN_KEY, token);
-
-    // Include token in the user object
-    newUser.token = token;
-    this.userSubject.next(newUser);
-
-    return of(newUser);
-  }
-
-  login(name: string): Observable<User> {
-    // In a real app, this would call an API endpoint
-    const user = this.getUser();
-    if (user && user.name === name.trim()) {
-      const token = localStorage.getItem(this.TOKEN_KEY);
-      if (token) {
-        user.token = token;
-        this.userSubject.next(user);
-        return of(user);
-      }
-    }
-    throw new Error('Login failed');
-  }
-
-  logout(): void {
-    this.clearUserData();
-    this.router.navigate(['/login']);
-  }
-
-  private clearUserData(): void {
-    // Clear user and token
-    localStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem(this.TOKEN_KEY);
-
-    // Reset user subject
-    this.userSubject.next(null);
-  }
-
-  // Modified to preserve budgets/expenses when just logging out
-  private clearAllUserData(): void {
-    this.clearUserData();
-    localStorage.removeItem(this.BUDGETS_KEY);
-    localStorage.removeItem(this.EXPENSES_KEY);
-
-    const keysToRemove = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && (key.includes('transaction') || key.includes('temp_'))) {
-        keysToRemove.push(key);
-      }
-    }
-
-    keysToRemove.forEach((key) => localStorage.removeItem(key));
-  }
-
-  // Only called when deleting account
-  confirmDeleteAccount(): void {
-    const userId = this.userSubject.value?.id;
-    this.clearAllApplicationData(); // Now includes all user data
-
-    if (userId) {
-      // Additional cleanup for user-specific data if needed
-    }
-
-    this.userSubject.next(null);
-    this.showDeleteConfirmationSubject.next(false);
-    this.router.navigate(['/login']);
-  }
-
-  private generateAuthToken(userId: string): string {
-    // Simple mock token - replace with real JWT in production
-    return btoa(
-      JSON.stringify({
-        userId,
-        created: Date.now(),
-        expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
-      }),
-    );
-  }
-
-  // Rest of your existing methods remain unchanged...
-  deleteUserAccount(): void {
+  // Account deletion confirmation flow
+  showDeleteAccountConfirmation(): void {
     this.showDeleteConfirmationSubject.next(true);
   }
 
-  getShowDeleteConfirmation(): boolean {
-    return this.showDeleteConfirmationSubject.value;
+  getShowDeleteConfirmation(): Observable<boolean> {
+    return this.showDeleteConfirmationSubject.asObservable();
   }
 
-  closeDeleteConfirmation(): void {
+  hideDeleteConfirmation(): void {
     this.showDeleteConfirmationSubject.next(false);
+  }
+
+  // Confirm account deletion
+  confirmDeleteAccount(): void {
+    this.deleteUserAccount().subscribe({
+      next: () => {
+        this.clearAllApplicationData();
+        this.authService.logout(); // Let AuthService handle logout
+      },
+      error: (error) => {
+        console.error('Error deleting account:', error);
+        // Handle error appropriately
+      },
+    });
+  }
+
+  // Data management methods
+  private clearUserData(): void {
+    localStorage.removeItem(this.USER_KEY);
+    this.userSubject.next(null);
   }
 
   private clearAllApplicationData(): void {
@@ -180,9 +144,22 @@ export class UserService {
 
     keysToRemove.forEach((key) => localStorage.removeItem(key));
     sessionStorage.clear();
+    this.userSubject.next(null);
   }
 
-  private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  // Utility method to refresh user profile from server
+  refreshUserProfile(): Observable<User> {
+    return this.getUserProfile().pipe(
+      tap((user) => this.updateCurrentUser(user)),
+    );
+  }
+
+  // Check if current user has specific role/permission
+  hasRole(role: string): boolean {
+    return this.authService.hasRole(role);
+  }
+
+  hasPermission(permission: string): boolean {
+    return this.authService.hasPermission(permission);
   }
 }

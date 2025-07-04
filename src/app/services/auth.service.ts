@@ -1,227 +1,146 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
-// Use consistent token key
 const TOKEN_KEY = 'authToken';
 
-interface RegisterRequest {
+// DTOs
+export interface RegisterRequest {
   username: string;
+  password: string;
   role?: string;
   permissions?: string[];
 }
 
-interface LoginRequest {
-  username: string;
-  role: string;
-  permissions?: string[];
+export interface LoginRequest {
+  email: string;
+  password: string;
 }
 
-interface AuthResponse {
+export interface AuthResponse {
   token: string;
   user?: any;
   message?: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:5056';
-  private isAuthenticatedSubject!: BehaviorSubject<boolean>;
+  private readonly isAuthenticatedSubject = new BehaviorSubject<boolean>(
+    this.hasValidToken(),
+  );
 
   constructor(
-    private http: HttpClient,
-    private jwtHelper: JwtHelperService,
-    private router: Router,
-  ) {
-    this.isAuthenticatedSubject = new BehaviorSubject<boolean>(
-      this.hasValidToken(),
-    );
+    private readonly http: HttpClient,
+    private readonly jwtHelper: JwtHelperService,
+    private readonly router: Router,
+  ) {}
+
+  // Authentication methods
+  register(data: RegisterRequest): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${environment.apiUrl}/signup`, data)
+      .pipe(tap((res) => this.handleAuthResponse(res)));
   }
 
-  createUser(userData: any): Observable<any> {
-    console.log(
-      'Sending registration request to:',
-      this.apiUrl + '/api/signup',
-    );
-    console.log('User data:', userData);
-
-    return this.http.post(this.apiUrl + '/api/signup', userData).pipe(
-      tap((response) => {
-        console.log('Registration response received:', response);
-      }),
-      catchError((error) => {
-        console.error('Registration request failed:', error);
-        throw error;
-      }),
-    );
-  }
-
-  signin(formData: any) {
-    return this.http.post(this.apiUrl + '/signin', formData);
-  }
-
-  isLoggedIn(): boolean {
-    return localStorage.getItem(TOKEN_KEY) != null;
+  login(data: LoginRequest): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${environment.apiUrl}/signin`, data)
+      .pipe(tap((res) => this.handleAuthResponse(res)));
   }
 
   logout(): void {
-    this.deleteToken();
+    this.clearToken();
     this.isAuthenticatedSubject.next(false);
-    this.router.navigateByUrl('/api/signup');
+    this.router.navigateByUrl('/signin');
   }
 
-  private deleteToken(): void {
-    localStorage.removeItem(TOKEN_KEY);
-  }
-
-  private saveToken(token: string): void {
-    localStorage.setItem(TOKEN_KEY, token);
-  }
-
-  isAuthenticated(): boolean {
-    try {
-      return this.hasValidToken();
-    } catch (error) {
-      console.warn('Error checking authentication status:', error);
-      return false;
-    }
-  }
-
+  // Token management
   getToken(): string | null {
-    try {
-      return localStorage.getItem(TOKEN_KEY);
-    } catch (error) {
-      console.warn('Error getting token from localStorage:', error);
-      return null;
-    }
+    return localStorage.getItem(TOKEN_KEY);
   }
 
-  getUserFromToken(): any {
-    try {
-      const token = this.getToken();
-      if (token && this.jwtHelper && !this.jwtHelper.isTokenExpired(token)) {
-        return this.jwtHelper.decodeToken(token);
-      }
-      return null;
-    } catch (error) {
-      console.warn('Error decoding token:', error);
-      return null;
-    }
+  isLoggedIn(): boolean {
+    return this.hasValidToken();
   }
 
-  getUserRole(): string | null {
-    try {
-      const user = this.getUserFromToken();
-      return user?.role || null;
-    } catch (error) {
-      console.warn('Error getting user role:', error);
-      return null;
-    }
-  }
-
-  getUserPermissions(): string[] {
-    try {
-      const user = this.getUserFromToken();
-      if (!user?.permission) return [];
-
-      return Array.isArray(user.permission)
-        ? user.permission
-        : [user.permission];
-    } catch (error) {
-      console.warn('Error getting user permissions:', error);
-      return [];
-    }
-  }
-
-  hasPermission(permission: string): boolean {
-    try {
-      const permissions = this.getUserPermissions();
-      return permissions.includes(permission);
-    } catch (error) {
-      console.warn('Error checking permission:', error);
-      return false;
-    }
-  }
-
-  hasRole(role: string): boolean {
-    try {
-      const userRole = this.getUserRole();
-      return userRole === role;
-    } catch (error) {
-      console.warn('Error checking role:', error);
-      return false;
-    }
-  }
-
-  private setToken(token: string): void {
-    try {
-      this.saveToken(token);
-      this.isAuthenticatedSubject.next(true);
-    } catch (error) {
-      console.error('Error setting token:', error);
-    }
-  }
-
-  private hasValidToken(): boolean {
-    try {
-      const token = this.getToken();
-
-      if (!token) {
-        return false;
-      }
-
-      if (!this.jwtHelper) {
-        console.warn('JwtHelper not available during token validation');
-        return true;
-      }
-
-      const isExpired = this.jwtHelper.isTokenExpired(token);
-
-      if (isExpired) {
-        this.logout();
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error validating token:', error);
-      this.logout();
-      return false;
-    }
-  }
-
-  get isAuthenticated$(): Observable<boolean> {
+  get isAuthenticated(): Observable<boolean> {
     return this.isAuthenticatedSubject.asObservable();
   }
 
+  // JWT token utilities
+  getClaims(): any | null {
+    const token = this.getToken();
+    return token && !this.jwtHelper.isTokenExpired(token)
+      ? this.jwtHelper.decodeToken(token)
+      : null;
+  }
+
+  getUserRole(): string | null {
+    return this.getClaims()?.role ?? null;
+  }
+
+  getUserPermissions(): string[] {
+    const permissions = this.getClaims()?.permissions;
+    return Array.isArray(permissions)
+      ? permissions
+      : permissions
+        ? [permissions]
+        : [];
+  }
+
+  hasRole(role: string): boolean {
+    return this.getUserRole() === role;
+  }
+
+  hasPermission(permission: string): boolean {
+    return this.getUserPermissions().includes(permission);
+  }
+
   getTokenExpirationDate(): Date | null {
-    try {
-      const token = this.getToken();
-      return token && this.jwtHelper
-        ? this.jwtHelper.getTokenExpirationDate(token)
-        : null;
-    } catch (error) {
-      console.warn('Error getting token expiration date:', error);
-      return null;
-    }
+    const token = this.getToken();
+    return token ? this.jwtHelper.getTokenExpirationDate(token) : null;
   }
 
   isTokenExpired(): boolean {
-    try {
-      const token = this.getToken();
-      if (!token || !this.jwtHelper) {
+    const token = this.getToken();
+    return !token || this.jwtHelper.isTokenExpired(token);
+  }
+
+  checkTokenExpiration(): boolean {
+    const expirationDate = this.getTokenExpirationDate();
+    if (expirationDate) {
+      const timeUntilExpiry = expirationDate.getTime() - Date.now();
+      // Warn if token expires in less than 5 minutes
+      if (timeUntilExpiry < 5 * 60 * 1000 && timeUntilExpiry > 0) {
+        console.warn('Token expiring soon');
         return true;
       }
+    }
+    return false;
+  }
 
-      return this.jwtHelper.isTokenExpired(token);
-    } catch (error) {
-      console.error('Error checking token expiration:', error);
-      return true;
+  // Private methods
+  private setToken(token: string): void {
+    localStorage.setItem(TOKEN_KEY, token);
+    this.isAuthenticatedSubject.next(true);
+  }
+
+  private clearToken(): void {
+    localStorage.removeItem(TOKEN_KEY);
+  }
+
+  private hasValidToken(): boolean {
+    const token = this.getToken();
+    return !!token && !this.jwtHelper.isTokenExpired(token);
+  }
+
+  private handleAuthResponse(res: AuthResponse): void {
+    if (res?.token) {
+      this.setToken(res.token);
     }
   }
 }
