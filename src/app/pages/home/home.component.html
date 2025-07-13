@@ -1,169 +1,310 @@
-
-<section class="text-black bg-white dark:bg-gray-900 body-font transition-all">
-  <div class="home-container px-6 sm:px-8 md:px-10 flex flex-col gap-y-8">
-    <h1 class="mt-6 sm:mt-10 text-3xl sm:text-5xl md:text-7xl font-bold break-words text-gray-900 dark:text-gray-200">
-      Welcome back, <span class="text-roseCustom">{{getUsername()}}</span>
-    </h1>
-
-    <div class="input-container flex flex-col lg:flex-row w-full gap-4 lg:gap-8 mt-2 md:mt-6">
-      <!-- Budget Form -->
-      <app-form-wrapper [formGroup]="budgetForm" class="w-full">
-        <div class="input-form bg-white dark:bg-gray-700 rounded-xl shadow-sm p-5 sm:p-8 md:p-10 flex flex-col gap-y-4">
-          <div class="flex items-center mb-2">
-            <div class="h-8 w-10 rounded-full bg-customHsl-accent/10 flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-customHsl-accent" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <h3 class="font-bold text-lg sm:text-xl textCustom dark:text-gray-200">Create Budget</h3>
-          </div>
-
-          <div class="text-inputs py-4 flex flex-col gap-y-2">
-            <label for="budget-name" class="text-sm font-medium text-gray-700 dark:text-gray-300">Budget Name</label>
-            <input
-              id="budget-name"
-              formControlName="name"
-              type="text"
-              class="input-select w-full p-4 text-base h-14 placeholder-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
-              placeholder="Budget Name"
-            >
-            <p *ngIf="budgetForm.get('name')?.invalid && budgetForm.get('name')?.touched"
-               class="mt-1 text-sm text-red-600 dark:text-red-400">
-              Please enter a budget name
-            </p>
-          </div>
-
-          <div class="text-inputs flex flex-col gap-y-2">
-            <label for="budget-amount" class="text-sm font-medium text-gray-700 dark:text-gray-300">Amount</label>
-            <div class="relative">
-              <input
-                id="budget-amount"
-                formControlName="budget"
-                type="number"
-                class="input-select w-full p-4 text-base h-14 placeholder-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
-                placeholder="MDL"
-                min="0"
-              >
-            </div>
-            <p *ngIf="budgetForm.get('budget')?.invalid && budgetForm.get('budget')?.touched"
-               class="mt-1 text-sm text-red-600  dark:text-red-400">
-              Please enter a valid amount
-            </p>
-          </div>
-
-          <button
-            [disabled]="budgetForm.invalid"
-            (click)="addBudget()"
-            class="mt-2 w-full sm:w-auto px-5 py-4 text-base rounded-lg bg-pink-300 hover:bg-pink-400 text-white dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white transition-all flex items-center justify-center gap-2 font-semibold">
-            <span>Create Budget</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                 fill="currentColor" aria-hidden="true" class="w-5 h-5">
-              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v5h5a1 1 0 110 2h-5v5a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd"></path>
-            </svg>
-          </button>
-        </div>
-      </app-form-wrapper>
-
-      <!-- Expense Form with improved padding -->
-      <app-form-wrapper [formGroup]="expenseForm" class="w-full">
-        <div class="input-form py-4 bg-white dark:bg-gray-700 rounded-xl shadow-sm p-5 sm:p-6 md:p-8 flex flex-col gap-y-5">
-          <div class="flex py-4 items-center mb-2">
-            <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1 2H8l-1-2H5V5z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <h3 class="font-bold text-lg sm:text-xl textCustom dark:text-gray-200">Add New Expense</h3>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="text-inputs flex flex-col gap-y-2">
-              <label for="expense-name" class="text-sm font-medium text-gray-700 dark:text-gray-300">Expense Name</label>
-              <input
-                id="expense-name"
-                formControlName="name"
-                type="text"
-                class="input-select w-full p-4 text-base h-14 placeholder-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
-                placeholder="e.g. Coffee"
-              >
-              <p *ngIf="expenseForm.get('name')?.invalid && expenseForm.get('name')?.touched"
-                 class="mt-1 text-sm text-red-600 dark:text-red-400">
-                Please enter an expense name
-              </p>
-            </div>
-
-            <div class="text-inputs flex flex-col gap-y-2">
-              <label for="expense-amount" class="text-sm font-medium text-gray-700 dark:text-gray-300">Amount</label>
-              <div class="relative">
-                <input
-                  id="expense-amount"
-                  formControlName="amount"
-                  type="number"
-                  class="input-select w-full p-4 text-base h-14 placeholder-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
-                  placeholder="MDL"
-                  min="0"
-                >
-              </div>
-              <p *ngIf="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched"
-                 class="mt-1 text-sm text-red-600 dark:text-red-400">
-                Please enter a valid amount
-              </p>
-            </div>
-          </div>
-
-          <div class="text-inputs flex flex-col gap-y-2">
-            <label for="budget-category" class="text-sm font-medium text-gray-700 dark:text-gray-300">Budget Category</label>
-            <div class="relative">
-              <select
-                id="budget-category"
-                aria-label="Budget Category"
-                formControlName="budgetCategoryId"
-                class="input-select p-4 text-base h-14 pr-10 appearance-none w-full dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
-              >
-                <option value="" disabled selected>Select a budget category</option>
-                <ng-container *ngFor="let item of budgetCategories; let i = index">
-                  <option [value]="item.id">{{item.name}}</option>
-                </ng-container>
-              </select>
-              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-            <p *ngIf="expenseForm.get('budgetCategoryId')?.invalid && expenseForm.get('budgetCategoryId')?.touched"
-               class="mt-1 text-sm text-red-600 dark:text-red-400">
-              Please select a budget category
-            </p>
-          </div>
-
-          <button
-            [disabled]="expenseForm.invalid"
-            (click)="addExpense()"
-            class="mt-2 w-full py-4 text-base rounded-lg bg-customHsl-text text-white border-none font-semibold transition-all hover:bg-opacity-90"
-          >
-            Add Expense
-          </button>
-        </div>
-      </app-form-wrapper>
+<!-- home.component.html -->
+<div class="flex h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900/20 dark:to-slate-900 text-gray-900 dark:text-white">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Header -->
+    <div class="sidebar-header">
+      <div class="w-8 h-8 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+        </svg>
+      </div>
     </div>
 
-    <!-- Budgets Section -->
-    @if(budgetCards && budgetCards.length > 0){
-      <h2 class="mini-title font-bold text-lg sm:text-xl text-gray-800 dark:text-gray-200 mt-2">Existing Budgets</h2>
-      <div class="flex w-full flex-wrap gap-4">
-        @for(item of budgetCards; track $index){
-          <app-budget-card class="budget-card" [config]="item"> </app-budget-card>
-        }
+    <!-- Navigation -->
+    <nav class="nav-section">
+      <!-- Main Navigation Items -->
+      <div
+        *ngFor="let item of sidebarItems"
+        class="nav-item"
+        [ngClass]="{ 'active': activeTab === item.id }"
+        (click)="setActiveTab(item.id)"
+      >
+        <ng-container *ngIf="item.icon !== 'logout'">
+          <button class="nav-link" [ngClass]="{ 'active': activeTab === item.id }">
+            <!-- Home Icon -->
+            <svg *ngIf="item.icon === 'home'" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9,22 9,12 15,12 15,22"/>
+            </svg>
+
+            <!-- Overview Icon -->
+            <svg *ngIf="item.icon === 'overview'" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <path d="M9 9h6M9 13h6M9 17h6"/>
+            </svg>
+
+            <!-- Analytics Icon -->
+            <svg *ngIf="item.icon === 'analytics'" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"/>
+              <path d="M18 17V9"/>
+              <path d="M13 17v-3"/>
+              <path d="M8 17v-6"/>
+            </svg>
+
+            <!-- Settings Icon -->
+            <svg *ngIf="item.icon === 'settings'" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+
+            <span class="nav-text">{{ item.label }}</span>
+          </button>
+
+          <!-- Tooltip for collapsed state -->
+          <div class="nav-tooltip" *ngIf="isCollapsed">
+            {{ item.label }}
+          </div>
+        </ng-container>
       </div>
-    }
 
-    @if(expenseTableData && expenseTableData.length > 0){
-      <h2 class="mini-title font-bold text-lg sm:text-xl text-gray-800 dark:text-white mt-4">Recent Expenses</h2>
+      <!-- Logout Item - Fixed at bottom -->
+      <div class="nav-logout">
+        <div
+          *ngFor="let item of sidebarItems"
+          class="nav-item"
+          [ngClass]="{ 'active': activeTab === item.id }"
+          (click)="setActiveTab(item.id)"
+        >
+          <ng-container *ngIf="item.icon === 'logout'">
+            <button class="nav-link" [ngClass]="{ 'active': activeTab === item.id }">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16,17 21,12 16,7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              <span class="nav-text">{{ item.label }}</span>
+            </button>
 
-      <app-table (removeRow)="handleDelete($event)" [data]="expenseTableData"></app-table>
-    }
+            <!-- Tooltip for collapsed state -->
+            <div class="nav-tooltip" *ngIf="false">
+              {{ item.label }}
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Main Content Area with Footer -->
+  <div class="flex-1 flex flex-col min-h-0">
+    <!-- Main Content -->
+    <div class="flex-1 main-content overflow-y-auto">
+      <!-- Header - Moved lower and to the right -->
+      <div class="content-header pt-12 pl-12 pb-6">
+        <h1 class="content-title text-3xl font-bold text-gray-900 dark:text-white">{{ getPageTitle() }}</h1>
+        <p class="content-subtitle text-gray-600 dark:text-gray-300 mt-2">{{ getPageSubtitle() }}</p>
+      </div>
+
+      <!-- Dynamic Content Based on Active Tab -->
+      <div *ngIf="activeTab === 'home'" class="dashboard-content px-12 pb-8">
+        <!-- Budget Cards -->
+        <div *ngIf="budgetCards && budgetCards.length > 0" class="mb-8">
+          <h3 class="section-title text-2xl font-bold text-gray-900 dark:text-white mb-6">Your Budgets</h3>
+          <div class="budget-grid">
+            <app-budget-card
+              *ngFor="let card of budgetCards; trackBy: trackById"
+              [config]="card"
+            ></app-budget-card>
+          </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="action-cards-grid grid md:grid-cols-2 gap-6">
+          <!-- Create New Budget -->
+          <div class="action-card bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <div class="action-card-header mb-6">
+              <div class="action-card-icon w-12 h-12 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl flex items-center justify-center mb-4">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="action-card-title text-xl font-bold text-gray-900 dark:text-white">Create New Budget</h3>
+                <p class="action-card-subtitle text-gray-600 dark:text-gray-300">Set up a new budget category</p>
+              </div>
+            </div>
+
+            <form [formGroup]="budgetForm" (ngSubmit)="addBudget()" class="action-form space-y-4">
+              <div class="form-group">
+                <label class="form-label block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Budget Name</label>
+                <input
+                  type="text"
+                  formControlName="name"
+                  placeholder="e.g., Monthly Groceries"
+                  class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                  [class.error]="budgetForm.get('name')?.invalid && budgetForm.get('name')?.touched"
+                />
+                <div *ngIf="budgetForm.get('name')?.invalid && budgetForm.get('name')?.touched" class="form-error text-red-500 text-sm mt-1">
+                  Budget name is required
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Budget Amount</label>
+                <input
+                  type="number"
+                  formControlName="budget"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                  [class.error]="budgetForm.get('budget')?.invalid && budgetForm.get('budget')?.touched"
+                />
+                <div *ngIf="budgetForm.get('budget')?.invalid && budgetForm.get('budget')?.touched" class="form-error text-red-500 text-sm mt-1">
+                  <span *ngIf="budgetForm.get('budget')?.errors?.['required']">Budget amount is required</span>
+                  <span *ngIf="budgetForm.get('budget')?.errors?.['min']">Budget amount must be greater than 0</span>
+                </div>
+              </div>
+
+              <button type="submit" [disabled]="budgetForm.invalid" class="form-submit-btn w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-pink-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span>Create Budget</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Add New Expense -->
+          <div class="action-card bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <div class="action-card-header mb-6">
+              <div class="action-card-icon w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-4">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="action-card-title text-xl font-bold text-gray-900 dark:text-white">Add New Expense</h3>
+                <p class="action-card-subtitle text-gray-600 dark:text-gray-300">Track your spending</p>
+              </div>
+            </div>
+
+            <form [formGroup]="expenseForm" (ngSubmit)="addExpense()" class="action-form space-y-4">
+              <div class="form-row grid grid-cols-2 gap-4">
+                <div class="form-group">
+                  <label class="form-label block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Expense Name</label>
+                  <input
+                    type="text"
+                    formControlName="name"
+                    placeholder="e.g., Coffee"
+                    class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    [class.error]="expenseForm.get('name')?.invalid && expenseForm.get('name')?.touched"
+                  />
+                  <div *ngIf="expenseForm.get('name')?.invalid && expenseForm.get('name')?.touched" class="form-error text-red-500 text-sm mt-1">
+                    Expense name is required
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Amount</label>
+                  <input
+                    type="number"
+                    formControlName="amount"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                    class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    [class.error]="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched"
+                  />
+                  <div *ngIf="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched" class="form-error text-red-500 text-sm mt-1">
+                    <span *ngIf="expenseForm.get('amount')?.errors?.['required']">Amount is required</span>
+                    <span *ngIf="expenseForm.get('amount')?.errors?.['min']">Amount must be greater than 0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Budget Category</label>
+                <select
+                  formControlName="budgetCategoryId"
+                  class="form-select w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  [class.error]="expenseForm.get('budgetCategoryId')?.invalid && expenseForm.get('budgetCategoryId')?.touched"
+                >
+                  <option value="">Select a budget category</option>
+                  <option *ngFor="let category of budgetCategories" [value]="category.id">
+                    {{ category.name }}
+                  </option>
+                </select>
+                <div *ngIf="expenseForm.get('budgetCategoryId')?.invalid && expenseForm.get('budgetCategoryId')?.touched" class="form-error text-red-500 text-sm mt-1">
+                  Please select a budget category
+                </div>
+              </div>
+
+              <button type="submit" [disabled]="expenseForm.invalid" class="form-submit-btn w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span>Add Expense</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!budgetCards || budgetCards.length === 0" class="empty-state text-center py-16">
+          <div class="empty-state-icon w-16 h-16 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+          <h3 class="empty-state-title text-2xl font-bold text-gray-900 dark:text-white mb-2">No budgets yet</h3>
+          <p class="empty-state-subtitle text-gray-600 dark:text-gray-300">Create your first budget to start tracking your expenses</p>
+        </div>
+      </div>
+
+      <!-- Other tab content -->
+      <div *ngIf="activeTab === 'overview'" class="tab-content px-12 pb-8">
+        <div class="dashboard-grid grid md:grid-cols-2 gap-6">
+          <div class="card bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8 hover:shadow-2xl transition-all duration-300">
+            <h3 class="card-title text-xl font-bold text-gray-900 dark:text-white mb-4">Monthly Budget</h3>
+            <div class="card-content text-gray-600 dark:text-gray-300">
+              Track your monthly spending and stay within budget limits.
+            </div>
+          </div>
+          <div class="card bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8 hover:shadow-2xl transition-all duration-300">
+            <h3 class="card-title text-xl font-bold text-gray-900 dark:text-white mb-4">Recent Transactions</h3>
+            <div class="card-content text-gray-600 dark:text-gray-300">
+              View your most recent transactions and expenses.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="activeTab === 'analytics'" class="tab-content px-12 pb-8">
+        <div class="dashboard-grid grid md:grid-cols-2 gap-6">
+          <div class="card bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8 hover:shadow-2xl transition-all duration-300">
+            <h3 class="card-title text-xl font-bold text-gray-900 dark:text-white mb-4">Spending Analysis</h3>
+            <div class="card-content text-gray-600 dark:text-gray-300">
+              Detailed insights into your spending patterns and trends.
+            </div>
+          </div>
+          <div class="card bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8 hover:shadow-2xl transition-all duration-300">
+            <h3 class="card-title text-xl font-bold text-gray-900 dark:text-white mb-4">Category Breakdown</h3>
+            <div class="card-content text-gray-600 dark:text-gray-300">
+              See how much you spend in each category.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="activeTab === 'settings'" class="tab-content px-12 pb-8">
+        <div class="dashboard-grid grid md:grid-cols-2 gap-6">
+          <div class="card bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8 hover:shadow-2xl transition-all duration-300">
+            <h3 class="card-title text-xl font-bold text-gray-900 dark:text-white mb-4">Account Settings</h3>
+            <div class="card-content text-gray-600 dark:text-gray-300">
+              Manage your account preferences and profile information.
+            </div>
+          </div>
+          <div class="card bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8 hover:shadow-2xl transition-all duration-300">
+            <h3 class="card-title text-xl font-bold text-gray-900 dark:text-white mb-4">Notification Settings</h3>
+            <div class="card-content text-gray-600 dark:text-gray-300">
+              Control how and when you receive notifications.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
-  <app-footer class="mt-8"></app-footer>
-</section>
+</div>
+

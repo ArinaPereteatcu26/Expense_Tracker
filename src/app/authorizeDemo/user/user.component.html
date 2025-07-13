@@ -1,1 +1,224 @@
-<p>user works!</p>
+<app-nav-bar></app-nav-bar>
+
+<!-- Background Elements -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none">
+  <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
+  <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-delayed"></div>
+  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-slow"></div>
+</div>
+
+<section class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative">
+  <div class="home-container px-6 sm:px-8 md:px-10 relative z-10">
+
+    <!-- Forms Grid -->
+    <div class="forms-grid grid lg:grid-cols-2 gap-8 mb-12">
+
+      <!-- Budget Form -->
+      <app-form-wrapper [formGroup]="budgetForm" class="w-full">
+        <div class="form-card glass-effect rounded-2xl p-8 hover-lift">
+          <div class="form-header flex items-center mb-6">
+            <div class="form-icon budget-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <h3 class="form-title text-2xl font-bold text-white">Create Budget</h3>
+          </div>
+
+          <div class="form-content space-y-6">
+            <div class="input-group">
+              <label for="budget-name" class="input-label">Budget Name</label>
+              <input
+                id="budget-name"
+                formControlName="name"
+                type="text"
+                class="form-input"
+                placeholder="e.g. Monthly Groceries"
+              >
+              <p *ngIf="budgetForm.get('name')?.invalid && budgetForm.get('name')?.touched"
+                 class="error-message">
+                Please enter a budget name
+              </p>
+            </div>
+
+            <div class="input-group">
+              <label for="budget-amount" class="input-label">Amount (MDL)</label>
+              <div class="relative">
+                <input
+                  id="budget-amount"
+                  formControlName="budget"
+                  type="number"
+                  class="form-input"
+                  placeholder="5000"
+                  min="0"
+                >
+                <div class="input-icon">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                  </svg>
+                </div>
+              </div>
+              <p *ngIf="budgetForm.get('budget')?.invalid && budgetForm.get('budget')?.touched"
+                 class="error-message">
+                Please enter a valid amount
+              </p>
+            </div>
+
+            <button
+              [disabled]="budgetForm.invalid"
+              (click)="addBudget()"
+              class="btn btn-primary btn-budget w-full"
+            >
+              <span>Create Budget</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </app-form-wrapper>
+
+      <!-- Expense Form -->
+      <app-form-wrapper [formGroup]="expenseForm" class="w-full">
+        <div class="form-card glass-effect rounded-2xl p-8 hover-lift">
+          <div class="form-header flex items-center mb-6">
+            <div class="form-icon expense-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
+            <h3 class="form-title text-2xl font-bold text-white">Add Expense</h3>
+          </div>
+
+          <div class="form-content space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="input-group">
+                <label for="expense-name" class="input-label">Expense Name</label>
+                <input
+                  id="expense-name"
+                  formControlName="name"
+                  type="text"
+                  class="form-input"
+                  placeholder="e.g. Coffee"
+                >
+                <p *ngIf="expenseForm.get('name')?.invalid && expenseForm.get('name')?.touched"
+                   class="error-message">
+                  Please enter an expense name
+                </p>
+              </div>
+
+              <div class="input-group">
+                <label for="expense-amount" class="input-label">Amount (MDL)</label>
+                <input
+                  id="expense-amount"
+                  formControlName="amount"
+                  type="number"
+                  class="form-input"
+                  placeholder="45"
+                  min="0"
+                >
+                <p *ngIf="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched"
+                   class="error-message">
+                  Please enter a valid amount
+                </p>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="budget-category" class="input-label">Budget Category</label>
+              <div class="relative">
+                <select
+                  id="budget-category"
+                  formControlName="budgetCategoryId"
+                  class="form-select"
+                >
+                  <option value="" disabled selected>Select a budget category</option>
+                  <ng-container *ngFor="let item of budgetCategories; let i = index">
+                    <option [value]="item.id">{{item.name}}</option>
+                  </ng-container>
+                </select>
+                <div class="select-icon">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+              <p *ngIf="expenseForm.get('budgetCategoryId')?.invalid && expenseForm.get('budgetCategoryId')?.touched"
+                 class="error-message">
+                Please select a budget category
+              </p>
+            </div>
+
+            <button
+              [disabled]="expenseForm.invalid"
+              (click)="addExpense()"
+              class="btn btn-primary btn-expense w-full"
+            >
+              <span>Add Expense</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </app-form-wrapper>
+    </div>
+
+    <!-- Budget Cards Section -->
+    <div class="budget-section mb-12" *ngIf="budgetCards && budgetCards.length > 0">
+      <div class="section-header flex items-center justify-between mb-8">
+        <h2 class="section-title text-3xl font-bold text-white">Your Budgets</h2>
+        <button class="btn btn-secondary">
+          <span>View All</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="budget-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <app-budget-card
+          *ngFor="let item of budgetCards; trackBy: trackByBudgetId"
+          class="budget-card-wrapper"
+          [config]="item">
+        </app-budget-card>
+      </div>
+    </div>
+
+    <!-- Recent Expenses Section -->
+    <div class="expenses-section" *ngIf="expenseTableData && expenseTableData.length > 0">
+      <div class="section-header flex items-center justify-between mb-6">
+        <h2 class="section-title text-3xl font-bold text-white">Recent Expenses</h2>
+        <button class="btn btn-icon" (click)="toggleExpenseFilters()">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="table-container glass-effect rounded-2xl p-8">
+        <app-table
+          (removeRow)="handleDelete($event)"
+          [data]="expenseTableData"
+          [isLoading]="isLoadingExpenses">
+        </app-table>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state text-center py-20" *ngIf="!budgetCards?.length && !expenseTableData?.length">
+      <div class="empty-icon mb-6">
+        <svg class="w-20 h-20 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-300 mb-4">Get Started with Your Budget</h3>
+      <p class="text-gray-400 max-w-md mx-auto">
+        Create your first budget and start tracking your expenses to take control of your finances.
+      </p>
+    </div>
+
+  </div>
+
+  <app-footer class="relative z-10 mt-20"></app-footer>
+</section>

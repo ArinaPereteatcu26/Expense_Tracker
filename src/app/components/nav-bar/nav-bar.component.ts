@@ -6,6 +6,12 @@ import { DeleteConfirmationDialogComponent } from '../../delete-confirmation-dia
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 
+interface Notification {
+  id: string;
+  message: string;
+  time: Date;
+  read: boolean;
+}
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -16,12 +22,12 @@ import { AuthService } from '../../services/auth.service';
 export class NavBarComponent {
   authService = inject(AuthService);
   userService = inject(UserService);
-  darkModeService = inject(DarkModeService);
   router = inject(Router);
 
   showUserMenu = false;
   showMobileMenu = false;
-
+  isDarkMode = false;
+  constructor(public darkModeService: DarkModeService) {}
   isAuthenticated(): boolean {
     try {
       return this.authService.isLoggedIn();
@@ -60,6 +66,7 @@ export class NavBarComponent {
 
   toggleDarkMode(): void {
     this.darkModeService.updateDarkMode();
+    this.isDarkMode = !this.isDarkMode;
   }
 
   deleteAccount(): void {
